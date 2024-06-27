@@ -37,6 +37,26 @@ html, body {
   font-size: 2rem;
 }
 
+#terminal > #text > h2 {
+  font-size: 1.5rem;
+}
+
+#terminal > #text > h3 {
+  font-size: 1.3rem;
+}
+
+#terminal > #text > h4 {
+  font-size: 1rem;
+}
+
+#terminal > #text > h5 {
+  font-size: 0.8rem;
+}
+
+#terminal > #text > h6 {
+  font-size: 0.7rem;
+}
+
 #terminal > #text > p {
   font-size: 1rem;
 }
@@ -51,7 +71,7 @@ html, body {
 #terminal > #inputFlex > #input {
   resize: none;
   overflow: hidden;
-  min-height: 16px;
+  font-size: 1rem;
   width: 100%;
   background-color: transparent;
   border: none;

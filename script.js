@@ -4,10 +4,13 @@ const textElem = document.querySelector("#text");
 let keys = {
   shift: false
 }
+let validElems = ["h1", "h2", "h3", "h4", "h5", "h6", "p", "b"];
 
 function output(text) {
   for(let line of text.split("\n")) {
-    let lineElem = document.createElement((line.split("/")[0]) ? line.split("/")[0] : "p");
+    let elemName = line.split("/")[0];
+    let lineElem = document.createElement((validElems.includes(elemName) ? elemName : "p"));
+    line = line.replace(elemName + "/", "");
     lineElem.innerText = line;
     textElem.appendChild(lineElem);
   }
@@ -27,7 +30,7 @@ document.addEventListener("keydown", (ev) => {
       ev.preventDefault();
       output(input.value);
       if(["help", "ls"].includes(input.value)) {
-        output(`h1/Help\np/${input.value} - lists commands`);
+        output(`p/${input.value} - lists commands`);
       }
       input.value = "";
       changeInputSize();
