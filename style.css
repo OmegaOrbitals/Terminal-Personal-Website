@@ -13,7 +13,8 @@ html, body {
 * {
   font-family: "Hack", monospace;
   color: white;
-  font-size: 16px;
+  margin: 0;
+  padding: 0;
 }
 
 #terminal {
@@ -32,8 +33,12 @@ html, body {
   flex-direction: column;
 }
 
-#terminal > #text > * {
-  margin: 0;
+#terminal > #text > h1 {
+  font-size: 2rem;
+}
+
+#terminal > #text > p {
+  font-size: 1rem;
 }
 
 #terminal > #inputFlex {
@@ -49,4 +54,6 @@ html, body {
   min-height: 16px;
   width: 100%;
   background-color: transparent;
+  border: none;
+  outline: none;
 }
