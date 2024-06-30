@@ -14,9 +14,10 @@ const commands = [
     description: "Lists available commands",
     run: () => {
       let res = "";
-      commands.forEach((command) => {
+      for(let i = 0; i < Object.keys(commands).length; i++) {
+        let command = commands[i];
         res += `${command.aliases} - ${command.description ? command.description : "No description"}\n`
-      })
+      }
       output([
         {
           args: {
@@ -41,11 +42,13 @@ const commands = [
   },
   {
     aliases: ["history"],
+    description: "Shows your command history",
     run: () => {
       let res = "";
-      commandHistory.forEach((command, index) => {
-        res += `${index + 1}. ${command}\n`;
-      })
+      for(let i = 0; i < commandHistory.length; i++) {
+        const command = commandHistory[i];
+        res += `${i + 1}. ${command}\n`;
+      }
       output([
         {
           args: {
@@ -97,7 +100,7 @@ document.addEventListener("keydown", (ev) => {
   if(ev.key == "Enter") {
     if(keys.shift == false) {
       ev.preventDefault();
-      if(input.value == "") return output();
+      if(input.value == "") return output();      
       output([
         {
           args: {
@@ -105,17 +108,30 @@ document.addEventListener("keydown", (ev) => {
           }
         }
       ])
-      commands.forEach((command) => {
-        command.aliases.forEach((alias) => {
-          if(input.value.split(" ")[0] == alias) {
-            command.run(input.value, command.aliases);
-          }
+      input.value.split("\n").forEach((line) => {
+        let isCommand = false;
+        commands.forEach((command) => {
+          command.aliases.forEach((alias) => {
+            if(line.split(" ")[0] == alias) {
+              command.run(line, command.aliases);
+              isCommand = true;
+            }
+          })
         })
+        if(!isCommand) {
+          output([
+            {
+              args: {
+                innerText: `Command '${line.split(" ")[0]}' not found.`
+              }
+            }
+          ])
+        }
+        if(commandHistory[commandHistory.length - 1] != line) {
+          commandHistory.push(line);
+          commandHistoryIndex = commandHistory.length;
+        }
       })
-      if(commandHistory[commandHistory.length - 1] != input.value) {
-        commandHistory.push(input.value);
-        commandHistoryIndex = commandHistory.length;
-      }
       input.value = "";
       changeInputSize();
     }
