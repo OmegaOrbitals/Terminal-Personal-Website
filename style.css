@@ -34,6 +34,10 @@ html, body {
   flex-direction: column;
 }
 
+#terminal > #text * {
+  width: fit-content;
+}
+
 #terminal > #text > h1 {
   font-size: 2rem;
 }

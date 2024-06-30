@@ -5,6 +5,8 @@ let keys = {
   shift: false,
   ctrl: false
 }
+let commandHistory = [];
+let commandHistoryIndex = -1;
 
 const commands = [
   {
@@ -13,7 +15,7 @@ const commands = [
     run: () => {
       let res = "";
       commands.forEach((command) => {
-        res += `${command.aliases} - ${command.description}\n`
+        res += `${command.aliases} - ${command.description ? command.description : "No description"}\n`
       })
       output([
         {
@@ -36,20 +38,46 @@ const commands = [
         }
       ])
     }
+  },
+  {
+    aliases: ["history"],
+    run: () => {
+      let res = "";
+      commandHistory.forEach((command, index) => {
+        res += `${index + 1}. ${command}\n`;
+      })
+      output([
+        {
+          args: {
+            innerText: res
+          }
+        }
+      ])
+    }
+  },
+  {
+    aliases: ["linktest"],
+    run: () => {
+      output([
+        {
+          type: "a",
+          args: {
+            href: "https://example.com",
+            innerText: "Link"
+          }
+        }
+      ])
+    }
   }
 ]
 
 function output(elements) {
+  if(!elements) {
+    let lineElem = document.createElement("br");
+    return textElem.appendChild(lineElem);
+  }
   for(let element of elements) {
-    let lineElem = document.createElement(element.type && element.type ? element.type : "p");
-    if(element.href) {
-      lineElem.addEventListener("click", (ev) => {
-        ev.preventDefault();
-        if(keys.ctrl == true) {
-          window.open(element.href);
-        }
-      })
-    }
+    let lineElem = document.createElement(element.type ? element.type : "p");
     for(let key of Object.keys(element.args)) {
       lineElem[key] = element.args[key];
     }
@@ -69,6 +97,7 @@ document.addEventListener("keydown", (ev) => {
   if(ev.key == "Enter") {
     if(keys.shift == false) {
       ev.preventDefault();
+      if(input.value == "") return output();
       output([
         {
           args: {
@@ -83,9 +112,26 @@ document.addEventListener("keydown", (ev) => {
           }
         })
       })
+      if(commandHistory[commandHistory.length - 1] != input.value) {
+        commandHistory.push(input.value);
+        commandHistoryIndex = commandHistory.length;
+      }
       input.value = "";
       changeInputSize();
     }
+  }
+  if(ev.key == "ArrowUp") {
+    if(commandHistoryIndex - 1 < 0) return;
+    commandHistoryIndex -= 1;
+    input.value = commandHistory[commandHistoryIndex];
+  }
+  if(ev.key == "ArrowDown") {
+    if(commandHistoryIndex + 2 > commandHistory.length) {
+      commandHistoryIndex += 1;
+      return input.value = "";
+    }
+    commandHistoryIndex += 1;
+    input.value = commandHistory[commandHistoryIndex];
   }
   if(ev.key == "Shift") {
     keys.shift = true;
@@ -109,6 +155,7 @@ input.addEventListener("input", (ev) => {
 })
 
 document.body.addEventListener("click", (ev) => {
+  if(document.activeElement != document.body) return;
   ev.preventDefault();
   input.focus();
 })
