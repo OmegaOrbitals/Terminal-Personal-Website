@@ -1,4 +1,4 @@
-const input = document.querySelector("#input");
+const inputElem = document.querySelector("#input");
 const textElem = document.querySelector("#text");
 
 let keys = {
@@ -7,6 +7,123 @@ let keys = {
 }
 let commandHistory = [];
 let commandHistoryIndex = -1;
+let reading = false;
+let readCallback;
+
+function read(cb) {
+  reading = true;
+  readCallback = cb;
+}
+
+function newInput(text) {
+  readCallback(text);
+  reading = false;
+}
+
+function output(elements) {
+  if(!elements) {
+    let lineElem = document.createElement("br");
+    return textElem.appendChild(lineElem);
+  }
+  for(let element of elements) {
+    let lineElem = document.createElement(element.type ? element.type : "p");
+    for(let key of Object.keys(element.args)) {
+      lineElem[key] = element.args[key];
+    }
+    textElem.appendChild(lineElem);
+  }
+}
+
+function changeInputSize() {
+  inputElem.style.height = "5px";
+  inputElem.style.height = (inputElem.scrollHeight) + "px";
+}
+
+changeInputSize();
+
+document.addEventListener("keydown", (ev) => {
+  if(inputElem != document.activeElement) return;
+  if(ev.key == "Enter") {
+    if(keys.shift == false) {
+      ev.preventDefault();
+      if(inputElem.value == "") return output();
+      output([
+        {
+          args: {
+            "innerText": inputElem.value
+          }
+        }
+      ])
+      if(reading == false) {
+        inputElem.value.split("\n").forEach((line) => {
+          let isCommand = false;
+          commands.forEach((command) => {
+            command.aliases.forEach((alias) => {
+              if(line.split(" ")[0] == alias) {
+                command.run(line, command.aliases);
+                isCommand = true;
+              }
+            })
+          })
+          if(!isCommand) {
+            output([
+              {
+                args: {
+                  innerText: `Command '${line.split(" ")[0]}' not found.`
+                }
+              }
+            ])
+          }
+          if(commandHistory[commandHistory.length - 1] != line) {
+            commandHistory.push(line);
+            commandHistoryIndex = commandHistory.length;
+          }
+        })
+      } else {
+        newInput(inputElem.value);
+      }
+      inputElem.value = "";
+    }
+  }
+  if(ev.key == "ArrowUp") {
+    if(commandHistoryIndex - 1 < 0) return;
+    commandHistoryIndex -= 1;
+    inputElem.value = commandHistory[commandHistoryIndex];
+  }
+  if(ev.key == "ArrowDown") {
+    if(commandHistoryIndex + 2 > commandHistory.length) {
+      commandHistoryIndex += 1;
+      return inputElem.value = "";
+    }
+    commandHistoryIndex += 1;
+    inputElem.value = commandHistory[commandHistoryIndex];
+  }
+  if(ev.key == "Shift") {
+    keys.shift = true;
+  }
+  if(ev.key == "Control") {
+    keys.ctrl = true;
+  }
+})
+
+document.addEventListener("keyup", (ev) => {
+    if(ev.key == "Shift") {
+      keys.shift = false;
+    }
+    if(ev.key == "Control") {
+      keys.ctrl = false;
+    }
+})
+
+inputElem.addEventListener("input", (ev) => {
+  changeInputSize();
+})
+
+document.body.addEventListener("click", (ev) => {
+  if(document.activeElement != document.body) return;
+  ev.preventDefault();
+  inputElem.focus();
+})
 
 const commands = [
   {
@@ -14,7 +131,7 @@ const commands = [
     description: "Lists available commands",
     run: () => {
       let res = "";
-      for(let i = 0; i < Object.keys(commands).length; i++) {
+      for(let i = 0; i < commands.length; i++) {
         let command = commands[i];
         res += `${command.aliases} - ${command.description ? command.description : "No description"}\n`
       }
@@ -59,6 +176,30 @@ const commands = [
     }
   },
   {
+    aliases: ["guessthenumber", "gtn"],
+    description: "Play guess the number",
+    run: () => {
+      let playing = true;
+      while(playing) {
+        let number = Math.floor(Math.random() * 10);
+        read((text) => {
+          output([
+            {
+              args: {
+                innerText: `You ${number == text ? "win" : "lose"}, it was ${number}. Try again? `
+              }
+            }
+          ])
+        })
+        read((text) => {
+          if(!text.startsWith("y")) {
+            playing = false;
+          }
+        })
+      }
+    }
+  },
+  {
     aliases: ["linktest"],
     run: () => {
       output([
@@ -73,105 +214,3 @@ const commands = [
     }
   }
 ]
-
-function output(elements) {
-  if(!elements) {
-    let lineElem = document.createElement("br");
-    return textElem.appendChild(lineElem);
-  }
-  for(let element of elements) {
-    let lineElem = document.createElement(element.type ? element.type : "p");
-    for(let key of Object.keys(element.args)) {
-      lineElem[key] = element.args[key];
-    }
-    textElem.appendChild(lineElem);
-  }
-}
-
-function changeInputSize() {
-  input.style.height = "5px";
-  input.style.height = (input.scrollHeight) + "px";
-}
-
-changeInputSize();
-
-document.addEventListener("keydown", (ev) => {
-  if(input != document.activeElement) return;
-  if(ev.key == "Enter") {
-    if(keys.shift == false) {
-      ev.preventDefault();
-      if(input.value == "") return output();      
-      output([
-        {
-          args: {
-            "innerText": input.value
-          }
-        }
-      ])
-      input.value.split("\n").forEach((line) => {
-        let isCommand = false;
-        commands.forEach((command) => {
-          command.aliases.forEach((alias) => {
-            if(line.split(" ")[0] == alias) {
-              command.run(line, command.aliases);
-              isCommand = true;
-            }
-          })
-        })
-        if(!isCommand) {
-          output([
-            {
-              args: {
-                innerText: `Command '${line.split(" ")[0]}' not found.`
-              }
-            }
-          ])
-        }
-        if(commandHistory[commandHistory.length - 1] != line) {
-          commandHistory.push(line);
-          commandHistoryIndex = commandHistory.length;
-        }
-      })
-      input.value = "";
-      changeInputSize();
-    }
-  }
-  if(ev.key == "ArrowUp") {
-    if(commandHistoryIndex - 1 < 0) return;
-    commandHistoryIndex -= 1;
-    input.value = commandHistory[commandHistoryIndex];
-  }
-  if(ev.key == "ArrowDown") {
-    if(commandHistoryIndex + 2 > commandHistory.length) {
-      commandHistoryIndex += 1;
-      return input.value = "";
-    }
-    commandHistoryIndex += 1;
-    input.value = commandHistory[commandHistoryIndex];
-  }
-  if(ev.key == "Shift") {
-    keys.shift = true;
-  }
-  if(ev.key == "Control") {
-    keys.ctrl = true;
-  }
-})
-
-document.addEventListener("keyup", (ev) => {
-    if(ev.key == "Shift") {
-      keys.shift = false;
-    }
-    if(ev.key == "Control") {
-      keys.ctrl = false;
-    }
-})
-
-input.addEventListener("input", (ev) => {
-  changeInputSize();
-})
-
-document.body.addEventListener("click", (ev) => {
-  if(document.activeElement != document.body) return;
-  ev.preventDefault();
-  input.focus();
-})
