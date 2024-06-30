@@ -5,6 +5,7 @@ let keys = {
   shift: false,
   ctrl: false
 }
+
 let commandHistory = [];
 let commandHistoryIndex = -1;
 let reading = false;
@@ -57,7 +58,7 @@ document.addEventListener("keydown", (ev) => {
             "innerText": "$ "
           }
         }
-      ]);
+      ])
       output([
         {
           args: {

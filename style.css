@@ -8,7 +8,6 @@ html, body {
   width: 100%;
   background-color: black;
   margin: 0;
-  cursor: text;
 }
 
 * {
@@ -25,6 +24,7 @@ html, body {
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
+  cursor: text;
 }
 
 #terminal > #text {
@@ -81,4 +81,17 @@ html, body {
   background-color: transparent;
   border: none;
   outline: none;
+}
+
+
+::-webkit-scrollbar {
+  width: 15px;
+}
+
+::-webkit-scrollbar-track {
+  background: #242424;
+}
+
+::-webkit-scrollbar-thumb {
+  background: white;
 }
