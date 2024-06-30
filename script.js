@@ -51,7 +51,13 @@ document.addEventListener("keydown", (ev) => {
   if(ev.key == "Enter") {
     if(keys.shift == false) {
       ev.preventDefault();
-      if(inputElem.value == "") return output();
+      if(inputElem.value == "") return output([
+        {
+          args: {
+            "innerText": "$ "
+          }
+        }
+      ]);
       output([
         {
           args: {
@@ -132,7 +138,7 @@ document.body.addEventListener("click", (ev) => {
 
 const commands = [
   {
-    aliases: ["help"],
+    aliases: ["help", "ls"],
     description: "Lists available commands",
     run: () => {
       let res = "";
@@ -155,8 +161,14 @@ const commands = [
     run: () => {
       output([
         {
+          type: "h2",
           args: {
-            innerText: `WIP`
+            innerText: `About me`
+          }
+        },
+        {
+          args: {
+            innerText: `I'm Omega. I do webdev, Node and Python. I enjoy programming, reading and gaming.`
           }
         }
       ])
