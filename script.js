@@ -8,15 +8,19 @@ let keys = {
 let commandHistory = [];
 let commandHistoryIndex = -1;
 let reading = false;
-let readCallback;
+let readPromiseResolve;
 
-function read(cb) {
-  reading = true;
-  readCallback = cb;
+function read() {
+  return new Promise((resolve) => {
+    reading = true;
+    readPromiseResolve = resolve;
+  })
 }
 
 function newInput(text) {
-  readCallback(text);
+  if(readPromiseResolve) {
+    readPromiseResolve(text);
+  }
   reading = false;
 }
 
@@ -31,6 +35,7 @@ function output(elements) {
       lineElem[key] = element.args[key];
     }
     textElem.appendChild(lineElem);
+    lineElem.scrollIntoView();
   }
 }
 
@@ -178,24 +183,22 @@ const commands = [
   {
     aliases: ["guessthenumber", "gtn"],
     description: "Play guess the number",
-    run: () => {
+    run: async () => {
       let playing = true;
       while(playing) {
         let number = Math.floor(Math.random() * 10);
-        read((text) => {
-          output([
-            {
-              args: {
-                innerText: `You ${number == text ? "win" : "lose"}, it was ${number}. Try again? `
-              }
+        let text = await read();
+        output([
+          {
+            args: {
+              innerText: `You ${number == text ? "win" : "lose"}, it was ${number}. Try again? `
             }
-          ])
-        })
-        read((text) => {
-          if(!text.startsWith("y")) {
-            playing = false;
           }
-        })
+        ])
+        text = await read();
+        if(!text.startsWith("y")) {
+          playing = false;
+        }
       }
     }
   },
