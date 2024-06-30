@@ -55,7 +55,7 @@ document.addEventListener("keydown", (ev) => {
       output([
         {
           args: {
-            "innerText": inputElem.value
+            "innerText": `$ ${inputElem.value}`
           }
         }
       ])
