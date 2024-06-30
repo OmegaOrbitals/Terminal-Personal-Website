@@ -60,7 +60,7 @@ document.addEventListener("keydown", (ev) => {
         }
       ])
       if(reading == false) {
-        inputElem.value.split("\n").forEach((line) => {
+        inputElem.value.replace(";", "\n").split("\n").forEach((line) => {
           let isCommand = false;
           commands.forEach((command) => {
             command.aliases.forEach((alias) => {
