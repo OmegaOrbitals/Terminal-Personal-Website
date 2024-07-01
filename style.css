@@ -94,7 +94,7 @@ html, body {
 
 
 ::-webkit-scrollbar {
-  width: 3vw;
+  width: 3vmin;
 }
 
 ::-webkit-scrollbar-track {
