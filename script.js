@@ -164,7 +164,11 @@ inputElem.addEventListener("input", (ev) => {
   changeInputSize();
 })
 
-document.body.addEventListener("click", (ev) => {
+document.addEventListener("click", (ev) => {
+  if(document.activeElement == document.body) inputElem.focus();
+})
+
+document.addEventListener("touchend", (ev) => {
   if(document.activeElement == document.body) inputElem.focus();
 })
 
