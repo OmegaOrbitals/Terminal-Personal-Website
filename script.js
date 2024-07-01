@@ -1,6 +1,7 @@
 const inputElem = document.querySelector("#input");
 const textElem = document.querySelector("#text");
 const terminalElem = document.querySelector("#terminal");
+const promptElem = document.querySelector("#prompt");
 
 let keys = {
   shift: false,
@@ -11,6 +12,7 @@ let commandHistory = [];
 let commandHistoryIndex = -1;
 let reading = false;
 let readPromiseResolve;
+let isInShell = true;
 
 function read() {
   return new Promise((resolve) => {
@@ -64,39 +66,47 @@ function moveCaretToEnd(el) {
 
 changeInputSize();
 
-document.addEventListener("keydown", (ev) => {
+document.addEventListener("keydown", async (ev) => {
   if(document.activeElement == document.body) inputElem.focus();
   if(ev.key == "Enter") {
     if(keys.shift == false) {
       ev.preventDefault();
       if(inputElem.value.trim() == "") {
-        return output([
-          {
-            args: {
-              "innerText": "$ "
+        if(reading == false) {
+          output([
+            {
+              args: {
+                "innerText": "$ "
+              }
             }
-          }
-        ])
+          ])
+        }
+        return;
       }
       output([
         {
           args: {
-            "innerText": `$ ${inputElem.value}`
+            "innerText": `${isInShell ? "$ " : ""}${inputElem.value}`
           }
         }
       ])
       if(reading == false) {
-        inputElem.value.replace(";", "\n").split("\n").forEach((line) => {
+        inputElem.value.replace(";", "\n").split("\n").forEach(async (line) => {
+          line = line.trim();
           let isCommand = false;
-          commands.forEach((command) => {
-            command.aliases.forEach((alias) => {
+          for(let command of commands) {
+            for(let alias of command.aliases) {
               if(line.split(" ")[0] == alias) {
-                command.run(line, command.aliases);
+                isInShell = false;
+                promptElem.style.display = "none";
+                await command.run(line, command.aliases);
                 isCommand = true;
+                isInShell = true;
+                promptElem.style.display = "block";
               }
-            })
-          })
-          if(!isCommand && line.trim() != "") {
+            }
+          }
+          if(!isCommand && line != "") {
             output([
               {
                 args: {
@@ -181,7 +191,7 @@ const commands = [
   {
     aliases: ["about", "aboutme"],
     description: "About me",
-    run: () => {
+    run: async () => {
       output([
         {
           type: "h2",
@@ -200,7 +210,7 @@ const commands = [
   {
     aliases: ["history"],
     description: "Shows your command history",
-    run: () => {
+    run: async () => {
       let res = "";
       for(let i = 0; i < commandHistory.length; i++) {
         const command = commandHistory[i];
@@ -239,7 +249,7 @@ const commands = [
   },
   {
     aliases: ["linktest"],
-    run: () => {
+    run: async () => {
       output([
         {
           type: "a",
