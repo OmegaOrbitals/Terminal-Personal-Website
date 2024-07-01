@@ -184,25 +184,12 @@ const commands = [
       let res = "";
       for(let i = 0; i < commands.length; i++) {
         let command = commands[i];
-        res += `${command.aliases} - ${command.description ? command.description : "No description"}\n`
+        res += `${command.aliases} - ${command.description ? command.description : "No description"}. Category: ${command.category ? command.category : "General"}\n`
       }
       output([
         {
           args: {
             innerText: res
-          }
-        }
-      ])
-    }
-  },
-  {
-    aliases: ["about", "aboutme"],
-    description: "About me",
-    run: async () => {
-      output([
-        {
-          args: {
-            innerText: `I'm Omega. I do webdev, Node and Python. I enjoy programming, reading and gaming.\nThis website was made for Hack Club's arcade. This was just meant to be a quick terminal-themed personal website, but I had so much fun making it, so I made a whole command system (aka tortured myself with async/await & Promises). This has command history, blocking input reading, and more. I'm also planning on making a command builder.`
           }
         }
       ])
@@ -227,8 +214,37 @@ const commands = [
     }
   },
   {
+    aliases: ["linktest"],
+    run: async () => {
+      output([
+        {
+          type: "a",
+          args: {
+            href: "https://example.com",
+            innerText: "Link"
+          }
+        }
+      ])
+    }
+  },
+  {
+    aliases: ["about", "aboutme"],
+    description: "About me",
+    category: "Personal",
+    run: async () => {
+      output([
+        {
+          args: {
+            innerText: `I'm Omega. I do webdev, Node and Python. I enjoy programming, reading and gaming.\nThis website was made for Hack Club's arcade. This was just meant to be a quick terminal-themed personal website, but I had so much fun making it, so I made a whole command system (aka tortured myself with async/await & Promises). This has command history, blocking input reading, and more. I'm also planning on making a command builder.`
+          }
+        }
+      ])
+    }
+  },
+  {
     aliases: ["guessthenumber", "gtn"],
     description: "Play guess the number",
+    category: "Games",
     run: async () => {
       let playing = true;
       while(playing) {
@@ -246,20 +262,6 @@ const commands = [
           playing = false;
         }
       }
-    }
-  },
-  {
-    aliases: ["linktest"],
-    run: async () => {
-      output([
-        {
-          type: "a",
-          args: {
-            href: "https://example.com",
-            innerText: "Link"
-          }
-        }
-      ])
     }
   }
 ]
