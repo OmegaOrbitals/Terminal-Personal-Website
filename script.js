@@ -64,8 +64,6 @@ function moveCaretToEnd(el) {
   }
 }
 
-changeInputSize();
-
 document.addEventListener("keydown", async (ev) => {
   if(document.activeElement == document.body) inputElem.focus();
   if(ev.key == "Enter") {
@@ -169,6 +167,15 @@ document.body.addEventListener("click", (ev) => {
   if(document.activeElement == document.body) inputElem.focus();
 })
 
+changeInputSize();
+output([
+  {
+    args: {
+      innerText: "Welcome to my personal website!\nType 'help' for a list of commands."
+    }
+  }
+])
+
 const commands = [
   {
     aliases: ["help", "ls"],
@@ -194,14 +201,8 @@ const commands = [
     run: async () => {
       output([
         {
-          type: "h2",
           args: {
-            innerText: `About me`
-          }
-        },
-        {
-          args: {
-            innerText: `I'm Omega. I do webdev, Node and Python. I enjoy programming, reading and gaming.`
+            innerText: `I'm Omega. I do webdev, Node and Python. I enjoy programming, reading and gaming.\nThis website was made for Hack Club's arcade. This was just meant to be a quick terminal-themed personal website, but I had so much fun making it, so I made a whole command system (aka tortured myself with async/await & Promises). This has command history, blocking input reading, and more. I'm also planning on making a command builder.`
           }
         }
       ])
