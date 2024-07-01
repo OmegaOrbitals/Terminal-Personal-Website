@@ -9,6 +9,7 @@ html, body {
   width: 100%;
   background-color: black;
   margin: 0;
+  overflow-y: scroll;
 }
 
 * {
@@ -19,14 +20,16 @@ html, body {
 }
 
 #terminal {
-  height: fit-content;
   min-height: 100%;
+  height: fit-content;
   width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
   cursor: text;
+  padding: 15px;
+  box-sizing: border-box;
 }
 
 #terminal > #text {
@@ -68,6 +71,10 @@ html, body {
   font-size: 1rem;
 }
 
+#terminal > #text > a {
+  color: #f0f0f0;
+}
+
 #terminal > #inputFlex {
   display: flex;
   height: fit-content;
@@ -87,7 +94,7 @@ html, body {
 
 
 ::-webkit-scrollbar {
-  width: 15px;
+  width: 3vw;
 }
 
 ::-webkit-scrollbar-track {
