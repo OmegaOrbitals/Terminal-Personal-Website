@@ -1,5 +1,6 @@
 const inputElem = document.querySelector("#input");
 const textElem = document.querySelector("#text");
+const terminalElem = document.querySelector("#terminal");
 
 let keys = {
   shift: false,
@@ -25,6 +26,10 @@ function newInput(text) {
   reading = false;
 }
 
+function onTerminalResize() {
+  terminalElem.scrollTop = terminalElem.scrollHeight;
+}
+
 function output(elements) {
   if(!elements) {
     let lineElem = document.createElement("br");
@@ -36,29 +41,43 @@ function output(elements) {
       lineElem[key] = element.args[key];
     }
     textElem.appendChild(lineElem);
-    lineElem.scrollIntoView();
+    onTerminalResize();
   }
 }
 
 function changeInputSize() {
   inputElem.style.height = "5px";
   inputElem.style.height = (inputElem.scrollHeight) + "px";
+  onTerminalResize();
+}
+
+function moveCaretToEnd(el) {
+  if(typeof el.selectionStart == "number") {
+    el.selectionStart = el.selectionEnd = el.value.length;
+  } else if(typeof el.createTextRange != "undefined") {
+    el.focus();
+    var range = el.createTextRange();
+    range.collapse(false);
+    range.select();
+  }
 }
 
 changeInputSize();
 
 document.addEventListener("keydown", (ev) => {
-  if(inputElem != document.activeElement) return;
+  if(document.activeElement == document.body) inputElem.focus();
   if(ev.key == "Enter") {
     if(keys.shift == false) {
       ev.preventDefault();
-      if(inputElem.value == "") return output([
-        {
-          args: {
-            "innerText": "$ "
+      if(inputElem.value.trim() == "") {
+        return output([
+          {
+            args: {
+              "innerText": "$ "
+            }
           }
-        }
-      ])
+        ])
+      }
       output([
         {
           args: {
@@ -77,7 +96,7 @@ document.addEventListener("keydown", (ev) => {
               }
             })
           })
-          if(!isCommand) {
+          if(!isCommand && line.trim() != "") {
             output([
               {
                 args: {
@@ -98,17 +117,22 @@ document.addEventListener("keydown", (ev) => {
     }
   }
   if(ev.key == "ArrowUp") {
+    ev.preventDefault();
     if(commandHistoryIndex - 1 < 0) return;
     commandHistoryIndex -= 1;
     inputElem.value = commandHistory[commandHistoryIndex];
+    moveCaretToEnd(input);
   }
   if(ev.key == "ArrowDown") {
-    if(commandHistoryIndex + 2 > commandHistory.length) {
+    ev.preventDefault();
+    if(commandHistoryIndex < commandHistory.length - 1) {
       commandHistoryIndex += 1;
-      return inputElem.value = "";
+      inputElem.value = commandHistory[commandHistoryIndex];
+    } else {
+      commandHistoryIndex = commandHistory.length;
+      inputElem.value = "";
     }
-    commandHistoryIndex += 1;
-    inputElem.value = commandHistory[commandHistoryIndex];
+    moveCaretToEnd(input);
   }
   if(ev.key == "Shift") {
     keys.shift = true;
@@ -132,9 +156,7 @@ inputElem.addEventListener("input", (ev) => {
 })
 
 document.body.addEventListener("click", (ev) => {
-  if(document.activeElement != document.body) return;
-  ev.preventDefault();
-  inputElem.focus();
+  if(document.activeElement == document.body) inputElem.focus();
 })
 
 const commands = [
