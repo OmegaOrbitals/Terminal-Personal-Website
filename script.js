@@ -69,7 +69,8 @@ document.addEventListener("keydown", async (ev) => {
   if(ev.key == "Enter") {
     if(keys.shift == false) {
       ev.preventDefault();
-      if(inputElem.value.trim() == "") {
+      if(inputElem.value.trim() == "" && inputElem.value.split("\n").length <= 1) {
+        inputElem.value = "";
         if(reading == false) {
           output([
             {
