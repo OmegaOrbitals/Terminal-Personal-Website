@@ -266,22 +266,25 @@ const commands = [
         {
           type: "a",
           args: {
-            innerHTML: `<br>Terminal Personal Website - my personal website. It's not just themed like a terminal, it IS a terminal!<br>`,
-            href: `https://github.com/OmegaOrbitals/Terminal-Personal-Website`
+            innerHTML: `<br>Terminal Personal Website - my personal website. It's not just themed like a terminal, it IS a terminal!<br><br>`,
+            href: `https://github.com/OmegaOrbitals/Terminal-Personal-Website`,
+            target: "_blank"
           }
         },
         {
           type: "a",
           args: {
-            innerHTML: `Tackpad - this lets you control a cursor using a touchscreen device. Like a trackpad! Extremely buggy.<br>`,
-            href: `https://github.com/OmegaOrbitals/tackpad`
+            innerHTML: `Tackpad - this lets you control a cursor using a touchscreen device. Like a trackpad! Extremely buggy.<br><br>`,
+            href: `https://github.com/OmegaOrbitals/tackpad`,
+            target: "_blank"
           }
         },
         {
           type: "a",
           args: {
             innerHTML: `Illuminate - a website I made for the Illuminate hackathon. I didn't win (I think I submitted it too late), but I'm kinda proud of it.<br><br>`,
-            href: `https://illuminate-omegaorbitals.glitch.me`
+            href: `https://illuminate-omegaorbitals.glitch.me`,
+            target: "_blank"
           }
         },
         {
