@@ -253,6 +253,46 @@ const commands = [
     }
   },
   {
+    aliases: ["projects"],
+    description: "My projects",
+    category: "Personal",
+    run: async () => {
+      output([
+        {
+          args: {
+            innerText: `I don't have that many completed projects, but here are some of them.`
+          }
+        },
+        {
+          type: "a",
+          args: {
+            innerHTML: `<br>Terminal Personal Website - my personal website. It's not just themed like a terminal, it IS a terminal!<br>`,
+            href: `https://github.com/OmegaOrbitals/Terminal-Personal-Website`
+          }
+        },
+        {
+          type: "a",
+          args: {
+            innerHTML: `Tackpad - this lets you control a cursor using a touchscreen device. Like a trackpad! Extremely buggy.<br>`,
+            href: `https://github.com/OmegaOrbitals/tackpad`
+          }
+        },
+        {
+          type: "a",
+          args: {
+            innerHTML: `Illuminate - a website I made for the Illuminate hackathon. I didn't win (I think I submitted it too late), but I'm kinda proud of it.<br><br>`,
+            href: `https://illuminate-omegaorbitals.glitch.me`
+          }
+        },
+        {
+          args: {
+            innerText: `That's it unfortunately, most of my projects are still unfinished.`
+          }
+        }
+      ])
+    }
+  },
+  {
     aliases: ["guessthenumber", "gtn"],
     description: "Play guess the number",
     category: "Games",
