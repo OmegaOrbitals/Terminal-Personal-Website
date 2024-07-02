@@ -45,7 +45,7 @@ body {
 }
 
 #terminal > #text * {
-  width: fit-content;
+  word-break: break-all;
 }
 
 #terminal > #text > h1 {
