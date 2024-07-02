@@ -135,7 +135,7 @@ document.addEventListener("keydown", async (ev) => {
     commandHistoryIndex -= 1;
     inputElem.value = commandHistory[commandHistoryIndex];
     changeInputSize();
-    autoscroll(input);
+    autoscroll(inputElem);
   }
   if(ev.key == "ArrowDown") {
     ev.preventDefault();
@@ -147,7 +147,7 @@ document.addEventListener("keydown", async (ev) => {
       inputElem.value = "";
     }
     changeInputSize();
-    autoscroll(input);
+    autoscroll(inputElem);
   }
   if(ev.key == "Shift") {
     keys.shift = true;
