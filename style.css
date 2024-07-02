@@ -87,6 +87,10 @@ body {
   flex-direction: row;
 }
 
+#terminal > #inputFlex > #prompt {
+  color: lightgreen;
+}
+
 #terminal > #inputFlex > #input {
   resize: none;
   overflow: hidden;

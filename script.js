@@ -74,7 +74,7 @@ document.addEventListener("keydown", async (ev) => {
     output([
       {
         args: {
-          "innerText": `${isInShell ? "$ " : ""}${inputElem.value}`
+          "innerHTML": `<span style="color: lightgreen">$ </span> ${inputElem.value}`
         }
       }
     ])
