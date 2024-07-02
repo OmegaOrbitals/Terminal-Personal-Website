@@ -74,10 +74,11 @@ document.addEventListener("keydown", async (ev) => {
     output([
       {
         args: {
-          "innerHTML": `${(reading == false) ? "<span style='color: lightgreen'>$ </span>" : ""}${inputElem.value}`
+          innerHTML: `${(reading == false) ? "<span style='color: lightgreen'>$ </span>" : ""}${inputElem.value.replaceAll("\n", "<br>")}`
         }
       }
     ])
+    console.log(inputElem.value)
     let inputValue = inputElem.value;
     inputElem.value = "";
     changeInputSize();
