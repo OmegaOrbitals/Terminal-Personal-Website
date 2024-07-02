@@ -74,23 +74,24 @@ document.addEventListener("keydown", async (ev) => {
     output([
       {
         args: {
-          "innerHTML": `<span style="color: lightgreen">$ </span> ${inputElem.value}`
+          "innerHTML": `${(reading == false) ? "<span style='color: lightgreen'>$ </span>" : ""}${inputElem.value}`
         }
       }
     ])
+    let inputValue = inputElem.value;
+    inputElem.value = "";
+    changeInputSize();
     if(reading == false) {
-      inputElem.value.replace(";", "\n").split("\n").forEach(async (line) => {
-        line = line.trim();
+      const lines = inputValue.replace(";", "\n").split("\n").map(line => line.trim());
+      isInShell = false;
+      promptElem.style.display = "none";
+      const linePromises = lines.map(async (line) => {
         let isCommand = false;
         for(let command of commands) {
           for(let alias of command.aliases) {
             if(line.split(" ")[0] == alias) {
-              isInShell = false;
-              promptElem.style.display = "none";
               await command.run(line, command.aliases);
               isCommand = true;
-              isInShell = true;
-              promptElem.style.display = "block";
             }
           }
         }
@@ -103,16 +104,17 @@ document.addEventListener("keydown", async (ev) => {
             }
           ])
         }
-        if(commandHistory[commandHistory.length - 1] != line && !inputElem.value.startsWith(" ")) {
+        if(commandHistory[commandHistory.length - 1] != line && !inputValue.startsWith(" ")) {
           commandHistory.push(line);
           commandHistoryIndex = commandHistory.length;
         }
       })
+      await Promise.all(linePromises);
+      isInShell = true;
+      promptElem.style.display = "block";
     } else {
-      newInput(inputElem.value);
+      newInput(inputValue);
     }
-    inputElem.value = "";
-    changeInputSize();
   }
   if(ev.key == "ArrowUp") {
     ev.preventDefault();
@@ -301,6 +303,38 @@ const commands = [
           playing = false;
         }
       }
+    }
+  },
+  {
+    aliases: ["get"],
+    description: "Do a GET request on a website",
+    category: "Web",
+    run: async (command) => {
+      let url = command.split(" ")[1];
+      fetch(url, {
+        method: "GET"
+      })
+      .then((res) => {
+        return res.text();
+      })
+      .then((text) => {
+        output([
+          {
+            args: {
+              innerText: text
+            }
+          }
+        ])
+      })
+      .catch((error) => {
+        output([
+          {
+            args: {
+              innerText: error
+            }
+          }
+        ])
+      })
     }
   }
 ]
