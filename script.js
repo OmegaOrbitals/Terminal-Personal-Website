@@ -289,15 +289,25 @@ const commands = [
     run: async () => {
       let playing = true;
       while(playing) {
-        let number = Math.floor(Math.random() * 10);
+        let number = Math.floor(Math.random() * 100);
         let text = await read();
-        output([
-          {
-            args: {
-              innerText: `You ${number == text ? "win" : "lose"}, it was ${number}. Try again? `
+        if(isNaN(text)) {
+          output([
+            {
+              args: {
+                innerText: `Not a number! Try again?`
+              }
             }
-          }
-        ])
+          ])
+        } else {
+          output([
+            {
+              args: {
+                innerText: `You ${number == text ? "win" : "lose"}, it was ${number}. Try again? `
+              }
+            }
+          ])
+        }
         text = await read();
         if(!text.startsWith("y")) {
           playing = false;
