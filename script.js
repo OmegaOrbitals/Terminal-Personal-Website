@@ -67,7 +67,7 @@ function autoscroll(el) {
 }
 
 document.addEventListener("keydown", async (ev) => {
-  if(document.activeElement == document.body) inputElem.focus();
+  if(document.activeElement == document.body && !window.getSelection().toString()) inputElem.focus();
   if(ev.key == "Enter") {
     if(keys.shift == false) {
       ev.preventDefault();
@@ -171,7 +171,7 @@ inputElem.addEventListener("input", (ev) => {
 })
 
 document.addEventListener("click", (ev) => {
-  if(document.activeElement == document.body) inputElem.focus();
+  if(document.activeElement == document.body && !window.getSelection().toString()) inputElem.focus();
 })
 
 document.addEventListener("touchend", (ev) => {
