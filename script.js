@@ -29,7 +29,9 @@ function newInput(text) {
 }
 
 function onTerminalResize() {
-  terminalElem.scrollTop = terminalElem.scrollHeight;
+  window.scrollTo({
+      top: document.body.scrollHeight
+  })
 }
 
 function output(elements) {
@@ -53,7 +55,7 @@ function changeInputSize() {
   onTerminalResize();
 }
 
-function moveCaretToEnd(el) {
+function autoscroll(el) {
   if(typeof el.selectionStart == "number") {
     el.selectionStart = el.selectionEnd = el.value.length;
   } else if(typeof el.createTextRange != "undefined") {
@@ -71,6 +73,7 @@ document.addEventListener("keydown", async (ev) => {
       ev.preventDefault();
       if(inputElem.value.trim() == "" && inputElem.value.split("\n").length <= 1) {
         inputElem.value = "";
+        changeInputSize();
         if(reading == false) {
           output([
             {
@@ -123,6 +126,7 @@ document.addEventListener("keydown", async (ev) => {
         newInput(inputElem.value);
       }
       inputElem.value = "";
+      changeInputSize();
     }
   }
   if(ev.key == "ArrowUp") {
@@ -130,7 +134,8 @@ document.addEventListener("keydown", async (ev) => {
     if(commandHistoryIndex - 1 < 0) return;
     commandHistoryIndex -= 1;
     inputElem.value = commandHistory[commandHistoryIndex];
-    moveCaretToEnd(input);
+    changeInputSize();
+    autoscroll(input);
   }
   if(ev.key == "ArrowDown") {
     ev.preventDefault();
@@ -141,7 +146,8 @@ document.addEventListener("keydown", async (ev) => {
       commandHistoryIndex = commandHistory.length;
       inputElem.value = "";
     }
-    moveCaretToEnd(input);
+    changeInputSize();
+    autoscroll(input);
   }
   if(ev.key == "Shift") {
     keys.shift = true;
