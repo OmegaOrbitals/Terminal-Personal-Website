@@ -78,7 +78,6 @@ document.addEventListener("keydown", async (ev) => {
         }
       }
     ])
-    console.log(inputElem.value)
     let inputValue = inputElem.value;
     inputElem.value = "";
     changeInputSize();
