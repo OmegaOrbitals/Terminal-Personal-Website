@@ -69,65 +69,50 @@ function autoscroll(el) {
 document.addEventListener("keydown", async (ev) => {
   if(document.activeElement == document.body && !window.getSelection().toString()) inputElem.focus();
   if(ev.key == "Enter") {
-    if(keys.shift == false) {
-      ev.preventDefault();
-      if(inputElem.value.trim() == "" && inputElem.value.split("\n").length <= 1) {
-        inputElem.value = "";
-        changeInputSize();
-        if(reading == false) {
+    if(keys.shift) return;
+    ev.preventDefault();
+    output([
+      {
+        args: {
+          "innerText": `${isInShell ? "$ " : ""}${inputElem.value}`
+        }
+      }
+    ])
+    if(reading == false) {
+      inputElem.value.replace(";", "\n").split("\n").forEach(async (line) => {
+        line = line.trim();
+        let isCommand = false;
+        for(let command of commands) {
+          for(let alias of command.aliases) {
+            if(line.split(" ")[0] == alias) {
+              isInShell = false;
+              promptElem.style.display = "none";
+              await command.run(line, command.aliases);
+              isCommand = true;
+              isInShell = true;
+              promptElem.style.display = "block";
+            }
+          }
+        }
+        if(!isCommand && line != "") {
           output([
             {
               args: {
-                "innerText": "$ "
+                innerText: `Command '${line.split(" ")[0]}' not found.`
               }
             }
           ])
         }
-        return;
-      }
-      output([
-        {
-          args: {
-            "innerText": `${isInShell ? "$ " : ""}${inputElem.value}`
-          }
+        if(commandHistory[commandHistory.length - 1] != line && !inputElem.value.startsWith(" ")) {
+          commandHistory.push(line);
+          commandHistoryIndex = commandHistory.length;
         }
-      ])
-      if(reading == false) {
-        inputElem.value.replace(";", "\n").split("\n").forEach(async (line) => {
-          line = line.trim();
-          let isCommand = false;
-          for(let command of commands) {
-            for(let alias of command.aliases) {
-              if(line.split(" ")[0] == alias) {
-                isInShell = false;
-                promptElem.style.display = "none";
-                await command.run(line, command.aliases);
-                isCommand = true;
-                isInShell = true;
-                promptElem.style.display = "block";
-              }
-            }
-          }
-          if(!isCommand && line != "") {
-            output([
-              {
-                args: {
-                  innerText: `Command '${line.split(" ")[0]}' not found.`
-                }
-              }
-            ])
-          }
-          if(commandHistory[commandHistory.length - 1] != line) {
-            commandHistory.push(line);
-            commandHistoryIndex = commandHistory.length;
-          }
-        })
-      } else {
-        newInput(inputElem.value);
-      }
-      inputElem.value = "";
-      changeInputSize();
+      })
+    } else {
+      newInput(inputElem.value);
     }
+    inputElem.value = "";
+    changeInputSize();
   }
   if(ev.key == "ArrowUp") {
     ev.preventDefault();
