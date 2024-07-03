@@ -65,7 +65,6 @@ function autoscroll(el) {
     range.select();
   }
 }
-
 document.addEventListener("keydown", async (ev) => {
   if(document.activeElement == document.body && !window.getSelection().toString()) inputElem.focus();
   if(ev.key == "Enter") {
@@ -85,7 +84,7 @@ document.addEventListener("keydown", async (ev) => {
       const lines = inputValue.replace(";", "\n").split("\n").map(line => line.trim());
       isInShell = false;
       promptElem.style.display = "none";
-      const linePromises = lines.map(async (line) => {
+      for(let line of lines) {
         let isCommand = false;
         for(let command of commands) {
           for(let alias of command.aliases) {
@@ -108,8 +107,7 @@ document.addEventListener("keydown", async (ev) => {
           commandHistory.push(line);
           commandHistoryIndex = commandHistory.length;
         }
-      })
-      await Promise.all(linePromises);
+      }
       isInShell = true;
       promptElem.style.display = "block";
     } else {
@@ -144,6 +142,7 @@ document.addEventListener("keydown", async (ev) => {
   }
 })
 
+
 document.addEventListener("keyup", (ev) => {
     if(ev.key == "Shift") {
       keys.shift = false;
@@ -169,7 +168,7 @@ changeInputSize();
 output([
   {
     args: {
-      innerText: "Welcome to my personal website!\nType 'help' for a list of commands."
+      innerText: "Welcome to my personal website!\nType 'help' fora list of commands."
     }
   }
 ])
@@ -233,7 +232,7 @@ const commands = [
       output([
         {
           args: {
-            innerText: `I'm Omega. I do webdev, Node and Python. I enjoy programming, reading and gaming.\nThis website was made for Hack Club's arcade. This was just meant to be a quick terminal-themed personal website, but I had so much fun making it, so I made a whole command system (aka tortured myself with async/await & Promises). This has command history, blocking input reading, and more. I'm also planning on adding a lot more commands and maybe a command builder.`
+            innerText: `I'm Omega. I do webdev, Node and Python. I enjoy programming, reading and gaming.\nThis website was made forHack Club's arcade. This was just meant to be a quick terminal-themed personal website, but I had so much fun making it, so I made a whole command system (aka tortured myself with async/await & Promises). This has command history, blocking input reading, and more. I'm also planning on adding a lot more commands and maybe a command builder.`
           }
         }
       ])
@@ -269,7 +268,7 @@ const commands = [
         {
           type: "a",
           args: {
-            innerHTML: `Illuminate - a website I made for the Illuminate hackathon. I didn't win (I think I submitted it too late), but I'm kinda proud of it.<br><br>`,
+            innerHTML: `Illuminate - a website I made forthe Illuminate hackathon. I didn't win (I think I submitted it too late), but I'm kinda proud of it.<br><br>`,
             href: `https://illuminate-omegaorbitals.glitch.me`,
             target: "_blank"
           }
