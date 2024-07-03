@@ -320,12 +320,16 @@ const commands = [
     description: "Do a GET request on a website",
     category: "Web",
     run: async (command) => {
-      let url = command.split(" ")[1];
+      let url = "https://corsproxy.io/?" + encodeURIComponent(command.split(" ")[1]);
       await fetch(url, {
         method: "GET"
       })
       .then((res) => {
-        return res.text();
+        if(!res.ok) {
+          throw new Error("Failed:", res);
+        } else {
+          return res.text();
+        }
       })
       .then((text) => {
         output([
