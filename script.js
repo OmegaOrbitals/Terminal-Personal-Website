@@ -82,7 +82,7 @@ document.addEventListener("keydown", async (ev) => {
     inputElem.value = "";
     changeInputSize();
     if(reading == false) {
-      const lines = inputValue.replace(";", "\n").split("\n").map(line => line.trim());
+      const lines = inputValue.replaceAll(";", "\n").split("\n").map(line => line.trim());
       for(let line of lines) {
         let isCommand = false;
         isInShell = false;
