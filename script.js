@@ -65,6 +65,7 @@ function autoscroll(el) {
     range.select();
   }
 }
+
 document.addEventListener("keydown", async (ev) => {
   if(document.activeElement == document.body && !window.getSelection().toString()) inputElem.focus();
   if(ev.key == "Enter") {
