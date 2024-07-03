@@ -83,10 +83,10 @@ document.addEventListener("keydown", async (ev) => {
     changeInputSize();
     if(reading == false) {
       const lines = inputValue.replace(";", "\n").split("\n").map(line => line.trim());
-      isInShell = false;
-      promptElem.style.display = "none";
       for(let line of lines) {
         let isCommand = false;
+        isInShell = false;
+        promptElem.style.display = "none";
         for(let command of commands) {
           for(let alias of command.aliases) {
             if(line.split(" ")[0] == alias) {
@@ -104,13 +104,13 @@ document.addEventListener("keydown", async (ev) => {
             }
           ])
         }
+        isInShell = true;
+        promptElem.style.display = "block";
         if(commandHistory[commandHistory.length - 1] != line && !inputValue.startsWith(" ")) {
           commandHistory.push(line);
           commandHistoryIndex = commandHistory.length;
         }
       }
-      isInShell = true;
-      promptElem.style.display = "block";
     } else {
       newInput(inputValue);
     }
@@ -321,7 +321,7 @@ const commands = [
     category: "Web",
     run: async (command) => {
       let url = command.split(" ")[1];
-      fetch(url, {
+      await fetch(url, {
         method: "GET"
       })
       .then((res) => {
