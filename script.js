@@ -87,8 +87,10 @@ document.addEventListener("keydown", async (ev) => {
     inputElem.value = "";
     changeInputSize();
     if(reading == false) {
-      const lines = inputValue.replaceAll(";", "\n").split("\n").map(line => line.trim());
+      const lines = inputValue.replaceAll(";", "\n").split("\n");
       for(let line of lines) {
+        let untrimmed = line;
+        line = line.trim();
         let isCommand = false;
         isInShell = false;
         promptElem.innerHTML = "";
@@ -111,7 +113,7 @@ document.addEventListener("keydown", async (ev) => {
         }
         isInShell = true;
         promptElem.innerHTML = defaultPrompt;
-        if(commandHistory[commandHistory.length - 1] != line && !inputValue.startsWith(" ")) {
+        if(commandHistory[commandHistory.length - 1] != line && !untrimmed.startsWith(" ") && line) {
           commandHistory.push(line);
           commandHistoryIndex = commandHistory.length;
         }
@@ -147,7 +149,6 @@ document.addEventListener("keydown", async (ev) => {
     keys.ctrl = true;
   }
 })
-
 
 document.addEventListener("keyup", (ev) => {
     if(ev.key == "Shift") {
