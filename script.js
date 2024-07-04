@@ -46,6 +46,7 @@ function output(elements) {
   for(let element of elements) {
     let lineElem = document.createElement(element.type ? element.type : "p");
     for(let key of Object.keys(element.args)) {
+      if(key == "innerHTML") element.args[key] = element.args[key].replaceAll("\n", "<br>");
       lineElem[key] = element.args[key];
     }
     textElem.appendChild(lineElem);
