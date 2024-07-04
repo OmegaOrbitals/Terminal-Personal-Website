@@ -14,7 +14,10 @@ let reading = false;
 let readPromiseResolve;
 let isInShell = true;
 
-function read() {
+let defaultPrompt = "$&nbsp;";
+
+function read(prompt) {
+  promptElem.innerHTML = prompt ? prompt : "";
   return new Promise((resolve) => {
     reading = true;
     readPromiseResolve = resolve;
@@ -26,6 +29,7 @@ function newInput(text) {
     readPromiseResolve(text);
   }
   reading = false;
+  promptElem.innerHTML = defaultPrompt;
 }
 
 function onTerminalResize() {
@@ -74,7 +78,7 @@ document.addEventListener("keydown", async (ev) => {
     output([
       {
         args: {
-          innerHTML: `${(reading == false) ? "<span style='color: lightgreen'>$ </span>" : ""}${inputElem.value.replaceAll("\n", "<br>")}`
+          innerHTML: promptElem.innerHTML + inputElem.value
         }
       }
     ])
@@ -86,7 +90,7 @@ document.addEventListener("keydown", async (ev) => {
       for(let line of lines) {
         let isCommand = false;
         isInShell = false;
-        promptElem.style.display = "none";
+        promptElem.innerHTML = "";
         for(let command of commands) {
           for(let alias of command.aliases) {
             if(line.split(" ")[0] == alias) {
@@ -105,7 +109,7 @@ document.addEventListener("keydown", async (ev) => {
           ])
         }
         isInShell = true;
-        promptElem.style.display = "block";
+        promptElem.innerHTML = defaultPrompt;
         if(commandHistory[commandHistory.length - 1] != line && !inputValue.startsWith(" ")) {
           commandHistory.push(line);
           commandHistoryIndex = commandHistory.length;
