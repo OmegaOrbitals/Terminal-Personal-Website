@@ -14,7 +14,7 @@ let reading = false;
 let readPromiseResolve;
 let isInShell = true;
 
-let defaultPrompt = "$&nbsp;";
+let defaultPrompt = promptElem.innerHTML;
 
 function read(prompt) {
   promptElem.innerHTML = prompt ? prompt : "";
