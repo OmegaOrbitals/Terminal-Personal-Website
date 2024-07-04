@@ -171,6 +171,7 @@ document.addEventListener("touchend", (ev) => {
   if(document.activeElement == document.body) inputElem.focus();
 })
 
+
 changeInputSize();
 output([
   {
@@ -296,25 +297,12 @@ const commands = [
       let playing = true;
       while(playing) {
         let number = Math.floor(Math.random() * 100);
-        let text = await read();
+        let text = await read(`Enter a number from 0 to 100: `);
         if(isNaN(text)) {
-          output([
-            {
-              args: {
-                innerText: `Not a number! Try again?`
-              }
-            }
-          ])
+          text = await read(`Not a number! Try again? `);
         } else {
-          output([
-            {
-              args: {
-                innerText: `You ${number == text ? "win" : "lose"}, it was ${number}. Try again? `
-              }
-            }
-          ])
+          text = await read(`You ${number == text ? "win" : "lose"}, it was ${number}. Try again? `);
         }
-        text = await read();
         if(!text.startsWith("y")) {
           playing = false;
         }
