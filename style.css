@@ -4,14 +4,13 @@
 }
 
 html {
-  height: 100vh;
+  height: 100%;
   width: 100%;
   margin: 0;
 }
 
 body {
-  min-height: 100vh;
-  height: fit-content;
+  height: 100%;
   width: 100%;
   background-color: black;
   overflow-x: hidden;
@@ -25,8 +24,7 @@ body {
 }
 
 #terminal {
-  min-height: 100vh;
-  height: fit-content;
+  height: 100%;
   width: 100%;
   display: flex;
   flex-direction: column;
