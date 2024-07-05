@@ -13,8 +13,51 @@ let commandHistoryIndex = -1;
 let reading = false;
 let readPromiseResolve;
 let isInShell = true;
+let filesystem = {
+  name: "/",
+  type: "root",
+  contents: [
+    {
+      name: "documents",
+      type: "directory",
+      contents: [
+        {
+          name: "document.pdf",
+          type: "file"
+        }
+      ]
+    }
+  ]
+}
 
 let defaultPrompt = promptElem.innerHTML;
+
+function getPathDestination(path) {
+  let destination = filesystem;
+  if(path == "/") return destination;
+  for(let item of path.split("/")) {
+    destination = destination[item];
+  }
+  return destination;
+}
+
+function createFile(path, name) {
+  let destination = getPathDestination(path);
+  if(destination.type != "directory" && destination.type != "root") return;
+  destination.contents.push({
+    name: name,
+    type: "file"
+  })
+}
+
+function createDir(path, name) {
+  let destination = getPathDestination(path);
+  if(destination.type != "directory" && destination.type != "root") return;
+  destination.contents.push({
+    name: name,
+    type: "directory"
+  })
+}
 
 function read(prompt) {
   promptElem.innerHTML = prompt ? prompt : "";
@@ -34,7 +77,7 @@ function newInput(text) {
 
 function onTerminalResize() {
   window.scrollTo({
-      top: document.body.scrollHeight
+    top: document.body.scrollHeight
   })
 }
 
@@ -216,6 +259,15 @@ const commands = [
           }
         }
       ])
+    }
+  },
+  {
+    aliases: ["touch", "createfile", "newfile"],
+    description: "Creates a file",
+    run: async () => {
+      let path = await read("Full path of parent directory: ")
+      let name = await read("Name of file: ")
+      createFile(path, name);
     }
   },
   {
