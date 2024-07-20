@@ -1,4 +1,4 @@
-const inputElem = document.querySelector("#input");
+const inputTextarea = document.querySelector("#inputTextarea");
 const textElem = document.querySelector("#text");
 const terminalElem = document.querySelector("#terminal");
 const promptElem = document.querySelector("#prompt");
@@ -98,8 +98,8 @@ function output(elements) {
 }
 
 function changeInputSize() {
-  inputElem.style.height = "5px";
-  inputElem.style.height = (inputElem.scrollHeight) + "px";
+  inputTextarea.style.height = "5px";
+  inputTextarea.style.height = (inputTextarea.scrollHeight) + "px";
   onTerminalResize();
 }
 
@@ -115,19 +115,19 @@ function autoscroll(el) {
 }
 
 document.addEventListener("keydown", async (ev) => {
-  if(document.activeElement == document.body && !window.getSelection().toString()) inputElem.focus();
+  if(document.activeElement == document.body && !window.getSelection().toString()) inputTextarea.focus();
   if(ev.key == "Enter") {
     if(keys.shift) return;
     ev.preventDefault();
     output([
       {
         args: {
-          innerHTML: promptElem.innerHTML + inputElem.value
+          innerHTML: promptElem.innerHTML + inputTextarea.value
         }
       }
     ])
-    let inputValue = inputElem.value;
-    inputElem.value = "";
+    let inputValue = inputTextarea.value;
+    inputTextarea.value = "";
     changeInputSize();
     if(reading == false) {
       const lines = inputValue.replaceAll(";", "\n").split("\n");
@@ -169,21 +169,21 @@ document.addEventListener("keydown", async (ev) => {
     ev.preventDefault();
     if(commandHistoryIndex - 1 < 0) return;
     commandHistoryIndex -= 1;
-    inputElem.value = commandHistory[commandHistoryIndex];
+    inputTextarea.value = commandHistory[commandHistoryIndex];
     changeInputSize();
-    autoscroll(inputElem);
+    autoscroll(inputTextarea);
   }
   if(ev.key == "ArrowDown") {
     ev.preventDefault();
     if(commandHistoryIndex < commandHistory.length - 1) {
       commandHistoryIndex += 1;
-      inputElem.value = commandHistory[commandHistoryIndex];
+      inputTextarea.value = commandHistory[commandHistoryIndex];
     } else {
       commandHistoryIndex = commandHistory.length;
-      inputElem.value = "";
+      inputTextarea.value = "";
     }
     changeInputSize();
-    autoscroll(inputElem);
+    autoscroll(inputTextarea);
   }
   if(ev.key == "Shift") {
     keys.shift = true;
@@ -202,16 +202,16 @@ document.addEventListener("keyup", (ev) => {
     }
 })
 
-inputElem.addEventListener("input", (ev) => {
+inputTextarea.addEventListener("input", (ev) => {
   changeInputSize();
 })
 
 document.addEventListener("click", (ev) => {
-  if(document.activeElement == document.body && !window.getSelection().toString()) inputElem.focus();
+  if(document.activeElement == document.body && !window.getSelection().toString()) inputTextarea.focus();
 })
 
 document.addEventListener("touchend", (ev) => {
-  if(document.activeElement == document.body) inputElem.focus();
+  if(document.activeElement == document.body) inputTextarea.focus();
 })
 
 
