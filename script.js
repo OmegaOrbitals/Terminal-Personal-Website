@@ -81,7 +81,7 @@ function onTerminalResize() {
   })
 }
 
-function output(elements) {
+function output(...elements) {
   if(!elements) {
     let lineElem = document.createElement("br");
     return textElem.appendChild(lineElem);
@@ -119,13 +119,11 @@ document.addEventListener("keydown", async (ev) => {
   if(ev.key == "Enter") {
     if(keys.shift) return;
     ev.preventDefault();
-    output([
-      {
-        args: {
-          innerHTML: promptElem.innerHTML + inputTextarea.value
-        }
+    output({
+      args: {
+        innerHTML: promptElem.innerHTML + inputTextarea.value
       }
-    ])
+    })
     let inputValue = inputTextarea.value;
     inputTextarea.value = "";
     changeInputSize();
@@ -146,13 +144,11 @@ document.addEventListener("keydown", async (ev) => {
           }
         }
         if(!isCommand && line != "") {
-          output([
-            {
-              args: {
-                innerText: `Command '${line.split(" ")[0]}' not found.`
-              }
+          output({
+            args: {
+              innerText: `Command '${line.split(" ")[0]}' not found.`
             }
-          ])
+          })
         }
         isInShell = true;
         promptElem.innerHTML = defaultPrompt;
@@ -216,13 +212,11 @@ document.addEventListener("touchend", (ev) => {
 
 
 changeInputSize();
-output([
-  {
-    args: {
-      innerText: "Welcome to my personal website!\nType 'help' for a list of commands."
-    }
+output({
+  args: {
+    innerText: "Welcome to my personal website!\nType 'help' for a list of commands."
   }
-])
+})
 
 const commands = [
   {
@@ -234,13 +228,11 @@ const commands = [
         let command = commands[i];
         res += `${command.aliases} - ${command.description ? command.description : "No description"}. Category: ${command.category ? command.category : "General"}\n`
       }
-      output([
-        {
-          args: {
-            innerText: res
-          }
+      output({
+        args: {
+          innerText: res
         }
-      ])
+      })
     }
   },
   {
@@ -252,13 +244,11 @@ const commands = [
         const command = commandHistory[i];
         res += `${i + 1}. ${command}\n`;
       }
-      output([
-        {
-          args: {
-            innerText: res
-          }
+      output({
+        args: {
+          innerText: res
         }
-      ])
+      })
     }
   },
   {
@@ -273,15 +263,13 @@ const commands = [
   {
     aliases: ["linktest"],
     run: async () => {
-      output([
-        {
-          type: "a",
-          args: {
-            href: "https://example.com",
-            innerText: "Link"
-          }
+      output({
+        type: "a",
+        args: {
+          href: "https://example.com",
+          innerText: "Link"
         }
-      ])
+      })
     }
   },
   {
@@ -289,13 +277,11 @@ const commands = [
     description: "About me",
     category: "Personal",
     run: async () => {
-      output([
-        {
-          args: {
-            innerText: `I'm Omega. I do webdev, Node and Python. I enjoy programming, reading and gaming.\nThis website was made for Hack Club's arcade. This was just meant to be a quick terminal-themed personal website, but I had so much fun making it, so I made a whole command system (aka tortured myself with async/await & Promises). This has command history, blocking input reading, and more. I'm also planning on adding a lot more commands and maybe a command builder.`
-          }
+      output({
+        args: {
+          innerText: `I'm Omega. I do webdev, Node and Python. I enjoy programming, reading and gaming.\nThis website was made for Hack Club's arcade. This was just meant to be a quick terminal-themed personal website, but I had so much fun making it, so I made a whole command system (aka tortured myself with async/await & Promises). This has command history, blocking input reading, and more. I'm also planning on adding a lot more commands and maybe a command builder.`
         }
-      ])
+      })
     }
   },
   {
@@ -303,42 +289,40 @@ const commands = [
     description: "My projects",
     category: "Personal",
     run: async () => {
-      output([
-        {
-          args: {
-            innerText: `I don't have that many completed projects, but here are some of them.`
-          }
-        },
-        {
-          type: "a",
-          args: {
-            innerHTML: `<br>Terminal Personal Website - my personal website. It's not just themed like a terminal, it IS a terminal!<br><br>`,
-            href: `https://github.com/OmegaOrbitals/Terminal-Personal-Website`,
-            target: "_blank"
-          }
-        },
-        {
-          type: "a",
-          args: {
-            innerHTML: `Tackpad - this lets you control a cursor using a touchscreen device. Like a trackpad! Extremely buggy.<br><br>`,
-            href: `https://github.com/OmegaOrbitals/tackpad`,
-            target: "_blank"
-          }
-        },
-        {
-          type: "a",
-          args: {
-            innerHTML: `Illuminate - a website I made for the Illuminate hackathon. I didn't win (I think I submitted it too late), but I'm kinda proud of it.<br><br>`,
-            href: `https://illuminate-omegaorbitals.glitch.me`,
-            target: "_blank"
-          }
-        },
-        {
-          args: {
-            innerText: `That's it unfortunately, most of my projects are still unfinished.`
-          }
+      output({
+        args: {
+          innerText: `I don't have that many completed projects, but here are some of them.`
         }
-      ])
+      },
+      {
+        type: "a",
+        args: {
+          innerHTML: `<br>Terminal Personal Website - my personal website. It's not just themed like a terminal, it IS a terminal!<br><br>`,
+          href: `https://github.com/OmegaOrbitals/Terminal-Personal-Website`,
+          target: "_blank"
+        }
+      },
+      {
+        type: "a",
+        args: {
+          innerHTML: `Tackpad - this lets you control a cursor using a touchscreen device. Like a trackpad! Extremely buggy.<br><br>`,
+          href: `https://github.com/OmegaOrbitals/tackpad`,
+          target: "_blank"
+        }
+      },
+      {
+        type: "a",
+        args: {
+          innerHTML: `Illuminate - a website I made for the Illuminate hackathon. I didn't win (I think I submitted it too late), but I'm kinda proud of it.<br><br>`,
+          href: `https://illuminate-omegaorbitals.glitch.me`,
+          target: "_blank"
+        }
+      },
+      {
+        args: {
+          innerText: `That's it unfortunately, most of my projects are still unfinished.`
+        }
+      })
     }
   },
   {
@@ -378,22 +362,18 @@ const commands = [
         }
       })
       .then((text) => {
-        output([
-          {
-            args: {
-              innerText: text
-            }
+        output({
+          args: {
+            innerText: text
           }
-        ])
+        })
       })
       .catch((error) => {
-        output([
-          {
-            args: {
-              innerText: error
-            }
+        output({
+          args: {
+            innerText: error
           }
-        ])
+        })
       })
     }
   }
