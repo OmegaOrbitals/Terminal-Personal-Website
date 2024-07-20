@@ -82,17 +82,29 @@ function onTerminalResize() {
 }
 
 function output(...elements) {
-  if(!elements) {
-    let lineElem = document.createElement("br");
-    return textElem.appendChild(lineElem);
-  }
   for(let element of elements) {
-    let lineElem = document.createElement(element.type ? element.type : "p");
-    for(let key of Object.keys(element.args)) {
-      if(key == "innerHTML") element.args[key] = element.args[key].replaceAll("\n", "<br>");
-      lineElem[key] = element.args[key];
+    let lineElem;
+    let lastChild = textElem.children[textElem.children.length - 1];
+    element.type = element.type ? element.type : "p";
+    element.type = element.type.toLowerCase();
+    if(lastChild && !element.separate && lastChild.getAttribute("separate") != "true" && element.type == lastChild.tagName.toLowerCase()) {
+      lineElem = document.createElement("span");
+      for(let key of Object.keys(element.args)) {
+        if(key == "innerHTML") element.args[key] = element.args[key].replaceAll("\n", "<br>");
+        lineElem[key] = element.args[key];
+      }
+      lastChild.appendChild(lineElem);
+    } else {
+      lineElem = document.createElement(element.type);
+      for(let key of Object.keys(element.args)) {
+        if(key == "innerHTML") element.args[key] = element.args[key].replaceAll("\n", "<br>");
+        lineElem[key] = element.args[key];
+      }
+      if(element.separate) {
+        lineElem.setAttribute("separate", true);
+      }
+      textElem.appendChild(lineElem);
     }
-    textElem.appendChild(lineElem);
     onTerminalResize();
   }
 }
@@ -120,8 +132,9 @@ document.addEventListener("keydown", async (ev) => {
     if(keys.shift) return;
     ev.preventDefault();
     output({
+      separate: true,
       args: {
-        innerHTML: promptElem.innerHTML + inputTextarea.value
+        innerHTML: `${promptElem.innerHTML + inputTextarea.value}`
       }
     })
     let inputValue = inputTextarea.value;
