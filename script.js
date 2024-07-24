@@ -1,3 +1,4 @@
+const inputText = document.querySelector("#inputText");
 const inputTextarea = document.querySelector("#inputTextarea");
 const textElem = document.querySelector("#text");
 const terminalElem = document.querySelector("#terminal");
@@ -83,7 +84,8 @@ function output(...elements) {
     for(let arg in element) {
       lineElem[arg] = element[arg];
     }
-    textElem.innerHTML += lineElem.outerHTML;
+    textElem.append(lineElem);
+    textElem.append(inputText);
     onTerminalResize();
   }
 }
@@ -111,8 +113,9 @@ document.addEventListener("keydown", async (ev) => {
     if(keys.shift) return;
     ev.preventDefault();
     let inputValue = inputTextarea.value;
-    output({ innerText: "\n$ ", style: "color: lightgreen" }, { innerText: inputValue + "\n" });
+    output({ innerText: inputValue + "\n" });
     inputTextarea.value = "";
+    inputText.innerText = inputTextarea.value;
     changeInputSize();
     if(reading == false) {
       const lines = inputValue.replaceAll(";", "\n").split("\n");
@@ -133,7 +136,7 @@ document.addEventListener("keydown", async (ev) => {
           output({ innerText: `Command '${line.split(" ")[0]}' not found.` });
         }
         isInShell = true;
-        output({ innerText: "$ ", style: "color: lightgreen" });
+        output({ innerText: "\n$ ", style: "color: lightgreen" });
         if(commandHistory[commandHistory.length - 1] != line && !untrimmed.startsWith(" ") && line) {
           commandHistory.push(line);
           commandHistoryIndex = commandHistory.length;
@@ -148,6 +151,7 @@ document.addEventListener("keydown", async (ev) => {
     if(commandHistoryIndex - 1 < 0) return;
     commandHistoryIndex -= 1;
     inputTextarea.value = commandHistory[commandHistoryIndex];
+    inputText.innerText = inputTextarea.value;
     changeInputSize();
     autoscroll(inputTextarea);
   }
@@ -160,6 +164,7 @@ document.addEventListener("keydown", async (ev) => {
       commandHistoryIndex = commandHistory.length;
       inputTextarea.value = "";
     }
+    inputText.innerText = inputTextarea.value;
     changeInputSize();
     autoscroll(inputTextarea);
   }
@@ -181,6 +186,7 @@ document.addEventListener("keyup", (ev) => {
 })
 
 inputTextarea.addEventListener("input", (ev) => {
+  inputText.innerText = inputTextarea.value;
   changeInputSize();
 })
 
@@ -195,6 +201,7 @@ document.addEventListener("touchend", (ev) => {
 
 changeInputSize();
 output({ innerText: "Welcome to my personal website!\nType 'help' for a list of commands." });
+output({ innerText: "\n$ ", style: "color: lightgreen" });
 
 const commands = [
   {
