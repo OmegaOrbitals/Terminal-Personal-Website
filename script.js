@@ -30,8 +30,6 @@ let filesystem = {
   ]
 }
 
-let defaultPrompt = promptElem.innerHTML;
-
 function getPathDestination(path) {
   let destination = filesystem;
   if(path == "/") return destination;
@@ -60,7 +58,6 @@ function createDir(path, name) {
 }
 
 function read(prompt) {
-  promptElem.innerHTML = prompt ? prompt : "";
   return new Promise((resolve) => {
     reading = true;
     readPromiseResolve = resolve;
@@ -72,7 +69,6 @@ function newInput(text) {
     readPromiseResolve(text);
   }
   reading = false;
-  promptElem.innerHTML = defaultPrompt;
 }
 
 function onTerminalResize() {
@@ -83,28 +79,11 @@ function onTerminalResize() {
 
 function output(...elements) {
   for(let element of elements) {
-    let lineElem;
-    let lastChild = textElem.children[textElem.children.length - 1];
-    element.type = element.type ? element.type : "p";
-    element.type = element.type.toLowerCase();
-    if(lastChild && !element.separate && lastChild.getAttribute("separate") != "true" && element.type == lastChild.tagName.toLowerCase()) {
-      lineElem = document.createElement("span");
-      for(let key of Object.keys(element.args)) {
-        if(key == "innerHTML") element.args[key] = element.args[key].replaceAll("\n", "<br>");
-        lineElem[key] = element.args[key];
-      }
-      lastChild.appendChild(lineElem);
-    } else {
-      lineElem = document.createElement(element.type);
-      for(let key of Object.keys(element.args)) {
-        if(key == "innerHTML") element.args[key] = element.args[key].replaceAll("\n", "<br>");
-        lineElem[key] = element.args[key];
-      }
-      if(element.separate) {
-        lineElem.setAttribute("separate", true);
-      }
-      textElem.appendChild(lineElem);
+    let lineElem = document.createElement("span");
+    for(let arg in element) {
+      lineElem[arg] = element[arg];
     }
+    textElem.innerHTML += lineElem.outerHTML;
     onTerminalResize();
   }
 }
@@ -131,13 +110,8 @@ document.addEventListener("keydown", async (ev) => {
   if(ev.key == "Enter") {
     if(keys.shift) return;
     ev.preventDefault();
-    output({
-      separate: true,
-      args: {
-        innerHTML: `${promptElem.innerHTML + inputTextarea.value}`
-      }
-    })
     let inputValue = inputTextarea.value;
+    output({ innerText: "\n$ ", style: "color: lightgreen" }, { innerText: inputValue + "\n" });
     inputTextarea.value = "";
     changeInputSize();
     if(reading == false) {
@@ -147,7 +121,6 @@ document.addEventListener("keydown", async (ev) => {
         line = line.trim();
         let isCommand = false;
         isInShell = false;
-        promptElem.innerHTML = "";
         for(let command of commands) {
           for(let alias of command.aliases) {
             if(line.split(" ")[0] == alias) {
@@ -157,14 +130,10 @@ document.addEventListener("keydown", async (ev) => {
           }
         }
         if(!isCommand && line != "") {
-          output({
-            args: {
-              innerText: `Command '${line.split(" ")[0]}' not found.`
-            }
-          })
+          output({ innerText: `Command '${line.split(" ")[0]}' not found.` });
         }
         isInShell = true;
-        promptElem.innerHTML = defaultPrompt;
+        output({ innerText: "$ ", style: "color: lightgreen" });
         if(commandHistory[commandHistory.length - 1] != line && !untrimmed.startsWith(" ") && line) {
           commandHistory.push(line);
           commandHistoryIndex = commandHistory.length;
@@ -225,11 +194,7 @@ document.addEventListener("touchend", (ev) => {
 
 
 changeInputSize();
-output({
-  args: {
-    innerText: "Welcome to my personal website!\nType 'help' for a list of commands."
-  }
-})
+output({ innerText: "Welcome to my personal website!\nType 'help' for a list of commands." });
 
 const commands = [
   {
@@ -241,11 +206,7 @@ const commands = [
         let command = commands[i];
         res += `${command.aliases} - ${command.description ? command.description : "No description"}. Category: ${command.category ? command.category : "General"}\n`
       }
-      output({
-        args: {
-          innerText: res
-        }
-      })
+      output({ innerText: res });
     }
   },
   {
@@ -257,11 +218,7 @@ const commands = [
         const command = commandHistory[i];
         res += `${i + 1}. ${command}\n`;
       }
-      output({
-        args: {
-          innerText: res
-        }
-      })
+      output({ innerText: res });
     }
   },
   {
@@ -276,13 +233,7 @@ const commands = [
   {
     aliases: ["linktest"],
     run: async () => {
-      output({
-        type: "a",
-        args: {
-          href: "https://example.com",
-          innerText: "Link"
-        }
-      })
+      output({ innerText: "Links are a WIP :(" });
     }
   },
   {
@@ -290,11 +241,7 @@ const commands = [
     description: "About me",
     category: "Personal",
     run: async () => {
-      output({
-        args: {
-          innerText: `I'm Omega. I do webdev, Node and Python. I enjoy programming, reading and gaming.\nThis website was made for Hack Club's arcade. This was just meant to be a quick terminal-themed personal website, but I had so much fun making it, so I made a whole command system (aka tortured myself with async/await & Promises). This has command history, blocking input reading, and more. I'm also planning on adding a lot more commands and maybe a command builder.`
-        }
-      })
+      output({ innerText: `I'm Omega. I do webdev, Node and Python. I enjoy programming, reading and gaming.\nThis website was made for Hack Club's arcade. This was just meant to be a quick terminal-themed personal website, but I had so much fun making it, so I made a whole command system (aka tortured myself with async/await & Promises). This has command history, blocking input reading, and more. I'm also planning on adding a lot more commands and maybe a command builder.` });
     }
   },
   {
@@ -302,7 +249,7 @@ const commands = [
     description: "My projects",
     category: "Personal",
     run: async () => {
-      output({
+      /* output({
         args: {
           innerText: `I don't have that many completed projects, but here are some of them.`
         }
@@ -335,7 +282,7 @@ const commands = [
         args: {
           innerText: `That's it unfortunately, most of my projects are still unfinished.`
         }
-      })
+      }) */
     }
   },
   {
@@ -375,18 +322,10 @@ const commands = [
         }
       })
       .then((text) => {
-        output({
-          args: {
-            innerText: text
-          }
-        })
+        output({ innerText: text });
       })
       .catch((error) => {
-        output({
-          args: {
-            innerText: error
-          }
-        })
+        output({ innerText: error });
       })
     }
   }
