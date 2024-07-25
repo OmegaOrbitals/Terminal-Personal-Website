@@ -96,7 +96,7 @@ function newInput(text) {
   reading = false;
 }
 
-function onTerminalResize() {
+function scrollToEnd() {
   window.scrollTo({
     top: document.body.scrollHeight
   })
@@ -121,7 +121,7 @@ function output(...elements) {
     textElem.append(lineElem);
     textElem.append(inputText);
     textElem.append(caretElem);
-    onTerminalResize();
+    scrollToEnd();
   }
 }
 
@@ -230,12 +230,12 @@ document.addEventListener("keydown", async (ev) => {
 })
 
 document.addEventListener("keyup", (ev) => {
-    if(ev.key == "Shift") {
-      keys.shift = false;
-    }
-    if(ev.key == "Control") {
-      keys.ctrl = false;
-    }
+  if(ev.key == "Shift") {
+    keys.shift = false;
+  }
+  if(ev.key == "Control") {
+    keys.ctrl = false;
+  }
 })
 
 window.addEventListener("load", () => {
@@ -245,6 +245,7 @@ window.addEventListener("load", () => {
 inputTextarea.addEventListener("input", (ev) => {
   updateInputText();
   setCaretInterval();
+  scrollToEnd();
 })
 
 inputTextarea.addEventListener("blur", (ev) => {
