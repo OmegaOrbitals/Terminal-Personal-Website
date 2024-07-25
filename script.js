@@ -218,7 +218,7 @@ const commands = [
         let command = commands[i];
         res += `${command.aliases} - ${command.description ? command.description : "No description"}. Category: ${command.category ? command.category : "General"}\n`
       }
-      output({ innerText: res });
+      output({ innerText: res.slice(0, -1) });
     }
   },
   {
