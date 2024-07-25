@@ -40,9 +40,9 @@ for(let button of contextElem.children) {
 
 contextButtons["copy"].addEventListener("click", (ev) => {
   navigator.clipboard.writeText(window.getSelection().toString())
-    .then(() => {
-      hideContextmenu();
-    })
+  .then(() => {
+    hideContextmenu();
+  })
 })
 
 contextButtons["paste"].addEventListener("click", (ev) => {
@@ -129,7 +129,7 @@ function outputPrompt() {
   output({ innerText: "\n$ ", style: "color: lightgreen" });
 }
 
-function autoscroll(el) {
+function moveToEnd(el) {
   if(typeof el.selectionStart == "number") {
     el.selectionStart = el.selectionEnd = el.value.length;
   } else if(typeof el.createTextRange != "undefined") {
@@ -207,7 +207,7 @@ document.addEventListener("keydown", async (ev) => {
     commandHistoryIndex -= 1;
     inputTextarea.value = commandHistory[commandHistoryIndex];
     updateInputText();
-    autoscroll(inputTextarea);
+    moveToEnd(inputTextarea);
   }
   if(ev.key == "ArrowDown") {
     ev.preventDefault();
@@ -219,7 +219,7 @@ document.addEventListener("keydown", async (ev) => {
       inputTextarea.value = "";
     }
     updateInputText();
-    autoscroll(inputTextarea);
+    moveToEnd(inputTextarea);
   }
   if(ev.key == "Shift") {
     keys.shift = true;
