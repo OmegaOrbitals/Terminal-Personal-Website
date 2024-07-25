@@ -38,6 +38,22 @@ for(let button of contextElem.children) {
   contextButtons[button.id] = button;
 }
 
+contextButtons["copy"].addEventListener("click", (ev) => {
+  navigator.clipboard.writeText(window.getSelection().toString())
+    .then(() => {
+      hideContextmenu();
+    })
+})
+
+contextButtons["paste"].addEventListener("click", (ev) => {
+  navigator.clipboard.readText()
+  .then((text) => {
+    inputTextarea.value += text;
+    updateInputText();
+    hideContextmenu();
+  })
+})
+
 function getPathDestination(path) {
   let destination = filesystem;
   if(path == "/") return destination;
@@ -84,6 +100,10 @@ function onTerminalResize() {
   window.scrollTo({
     top: document.body.scrollHeight
   })
+}
+
+function updateInputText() {
+  inputText.innerText = inputTextarea.value;
 }
 
 function output(...elements) {
@@ -151,7 +171,7 @@ document.addEventListener("keydown", async (ev) => {
     ev.preventDefault();
     let inputValue = inputTextarea.value;
     inputTextarea.value = "";
-    inputText.innerText = inputTextarea.value;
+    updateInputText();
     if(inputValue) output({ innerText: inputValue + "\n" });
     if(reading == false) {
       const lines = inputValue.replaceAll(";", "\n").split("\n");
@@ -185,7 +205,7 @@ document.addEventListener("keydown", async (ev) => {
     if(commandHistoryIndex - 1 < 0) return;
     commandHistoryIndex -= 1;
     inputTextarea.value = commandHistory[commandHistoryIndex];
-    inputText.innerText = inputTextarea.value;
+    updateInputText();
     autoscroll(inputTextarea);
   }
   if(ev.key == "ArrowDown") {
@@ -197,7 +217,7 @@ document.addEventListener("keydown", async (ev) => {
       commandHistoryIndex = commandHistory.length;
       inputTextarea.value = "";
     }
-    inputText.innerText = inputTextarea.value;
+    updateInputText();
     autoscroll(inputTextarea);
   }
   if(ev.key == "Shift") {
@@ -222,7 +242,7 @@ window.addEventListener("load", () => {
 })
 
 inputTextarea.addEventListener("input", (ev) => {
-  inputText.innerText = inputTextarea.value;
+  updateInputText();
   setCaretInterval();
 })
 
@@ -242,7 +262,10 @@ terminalElem.addEventListener("contextmenu", (ev) => {
 
 document.addEventListener("click", (ev) => {
   if(document.activeElement == document.body && !window.getSelection().toString()) inputTextarea.focus();
-  hideContextmenu();
+})
+
+document.addEventListener("mousedown", (ev) => {
+  if(!contextmenu.contains(ev.target)) hideContextmenu();
 })
 
 document.addEventListener("touchend", (ev) => {
