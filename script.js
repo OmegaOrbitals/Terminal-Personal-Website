@@ -167,6 +167,7 @@ function setCaretInterval() {
 document.addEventListener("keydown", async (ev) => {
   if(document.activeElement == document.body && !window.getSelection().toString()) inputTextarea.focus();
   if(ev.key == "Enter") {
+    setCaretInterval();
     if(keys.shift) return;
     ev.preventDefault();
     let inputValue = inputTextarea.value;
