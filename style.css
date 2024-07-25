@@ -45,7 +45,7 @@ body {
 }
 
 #terminal > #text > #caret {
-  background-color: white;
+  background-color: transparent;
 }
 
 #terminal > #inputTextarea {

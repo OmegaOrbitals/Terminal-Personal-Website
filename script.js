@@ -31,6 +31,7 @@ let filesystem = {
     }
   ]
 }
+let caretInterval;
 
 function getPathDestination(path) {
   let destination = filesystem;
@@ -110,6 +111,14 @@ function autoscroll(el) {
   }
 }
 
+function setCaretInterval() {
+  caretElem.style["background-color"] = "white";
+  clearInterval(caretInterval);
+  caretInterval = setInterval(() => {
+    caretElem.style["background-color"] = caretElem.style["background-color"] == "white" ? "transparent" : "white";
+  }, 500)
+}
+
 document.addEventListener("keydown", async (ev) => {
   if(document.activeElement == document.body && !window.getSelection().toString()) inputTextarea.focus();
   if(ev.key == "Enter") {
@@ -185,13 +194,22 @@ document.addEventListener("keyup", (ev) => {
     }
 })
 
+window.addEventListener("load", () => {
+  inputTextarea.focus();
+})
+
 inputTextarea.addEventListener("input", (ev) => {
   inputText.innerText = inputTextarea.value;
-  caretElem.style["background-color"] = "white";
+  setCaretInterval();
+})
+
+inputTextarea.addEventListener("blur", (ev) => {
   clearInterval(caretInterval);
-  caretInterval = setInterval(() => {
-    caretElem.style["background-color"] = caretElem.style["background-color"] == "white" ? "transparent" : "white";
-  }, 500)
+  caretElem.style["background-color"] = "transparent";
+})
+
+inputTextarea.addEventListener("focus", (ev) => {
+  setCaretInterval();
 })
 
 document.addEventListener("click", (ev) => {
@@ -204,9 +222,6 @@ document.addEventListener("touchend", (ev) => {
 
 output({ innerText: "Welcome to my personal website!\nType 'help' for a list of commands." });
 output({ innerText: "\n$ ", style: "color: lightgreen" });
-let caretInterval = setInterval(() => {
-  caretElem.style["background-color"] = caretElem.style["background-color"] == "white" ? "transparent" : "white";
-}, 500)
 
 const commands = [
   {
