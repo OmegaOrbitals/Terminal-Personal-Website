@@ -175,7 +175,8 @@ document.addEventListener("keydown", async (ev) => {
     if(inputValue) output({ innerText: inputValue + "\n" });
     if(reading == false) {
       const lines = inputValue.replaceAll(";", "\n").split("\n");
-      for(let line of lines) {
+      for(let i = 0; i < lines.length; i++) {
+        let line = lines[i];
         let untrimmed = line;
         let isCommand = false;
         line = line.trim();
@@ -188,14 +189,14 @@ document.addEventListener("keydown", async (ev) => {
           }
         }
         if(!isCommand && line != "") {
-          output({ innerText: `Command '${line.split(" ")[0]}' not found.` });
+          output({ innerText: `Command '${line.split(" ")[0]}' not found.${i == lines.length - 1 ? "" : "\n"}` });
         }
-        outputPrompt();
         if(commandHistory[commandHistory.length - 1] != line && !untrimmed.startsWith(" ") && line) {
           commandHistory.push(line);
           commandHistoryIndex = commandHistory.length;
         }
       }
+      outputPrompt();
     } else {
       newInput(inputValue);
     }
@@ -297,7 +298,7 @@ const commands = [
         const command = commandHistory[i];
         res += `${i + 1}. ${command}\n`;
       }
-      output({ innerText: res });
+      output({ innerText: res.slice(0, -1) });
     }
   },
   {
