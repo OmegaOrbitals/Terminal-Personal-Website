@@ -14,7 +14,6 @@ let commandHistory = [];
 let commandHistoryIndex = -1;
 let reading = false;
 let readPromiseResolve;
-let isInShell = true;
 let filesystem = {
   name: "/",
   type: "root",
@@ -100,6 +99,10 @@ function output(...elements) {
   }
 }
 
+function outputPrompt() {
+  output({ innerText: "\n$ ", style: "color: lightgreen" });
+}
+
 function autoscroll(el) {
   if(typeof el.selectionStart == "number") {
     el.selectionStart = el.selectionEnd = el.value.length;
@@ -125,16 +128,15 @@ document.addEventListener("keydown", async (ev) => {
     if(keys.shift) return;
     ev.preventDefault();
     let inputValue = inputTextarea.value;
-    if(inputValue) output({ innerText: inputValue + "\n" });
     inputTextarea.value = "";
     inputText.innerText = inputTextarea.value;
+    if(inputValue) output({ innerText: inputValue + "\n" });
     if(reading == false) {
       const lines = inputValue.replaceAll(";", "\n").split("\n");
       for(let line of lines) {
         let untrimmed = line;
-        line = line.trim();
         let isCommand = false;
-        isInShell = false;
+        line = line.trim();
         for(let command of commands) {
           for(let alias of command.aliases) {
             if(line.split(" ")[0] == alias) {
@@ -146,8 +148,7 @@ document.addEventListener("keydown", async (ev) => {
         if(!isCommand && line != "") {
           output({ innerText: `Command '${line.split(" ")[0]}' not found.` });
         }
-        isInShell = true;
-        output({ innerText: "\n$ ", style: "color: lightgreen" });
+        outputPrompt();
         if(commandHistory[commandHistory.length - 1] != line && !untrimmed.startsWith(" ") && line) {
           commandHistory.push(line);
           commandHistoryIndex = commandHistory.length;
@@ -221,7 +222,7 @@ document.addEventListener("touchend", (ev) => {
 })
 
 output({ innerText: "Welcome to my personal website!\nType 'help' for a list of commands." });
-output({ innerText: "\n$ ", style: "color: lightgreen" });
+outputPrompt();
 
 const commands = [
   {
