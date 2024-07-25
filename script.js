@@ -113,7 +113,7 @@ document.addEventListener("keydown", async (ev) => {
     if(keys.shift) return;
     ev.preventDefault();
     let inputValue = inputTextarea.value;
-    output({ innerText: inputValue + "\n" });
+    if(inputValue) output({ innerText: inputValue + "\n" });
     inputTextarea.value = "";
     inputText.innerText = inputTextarea.value;
     changeInputSize();
