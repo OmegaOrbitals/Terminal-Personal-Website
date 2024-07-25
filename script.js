@@ -4,6 +4,7 @@ const inputTextarea = document.querySelector("#inputTextarea");
 const textElem = document.querySelector("#text");
 const terminalElem = document.querySelector("#terminal");
 const promptElem = document.querySelector("#prompt");
+const contextElem = document.querySelector("#contextmenu");
 
 let keys = {
   shift: false,
@@ -31,6 +32,11 @@ let filesystem = {
   ]
 }
 let caretInterval;
+let contextButtons = {};
+
+for(let button of contextElem.children) {
+  contextButtons[button.id] = button;
+}
 
 function getPathDestination(path) {
   let destination = filesystem;
@@ -112,6 +118,22 @@ function autoscroll(el) {
     range.collapse(false);
     range.select();
   }
+}
+
+function showContextmenu(ev) {
+  contextElem.style.left = ev.clientX + "px";
+  contextElem.style.top = ev.clientY + "px";
+  contextElem.style.display = "flex";
+  const selection = window.getSelection();
+  if(selection.rangeCount > 0 && selection.toString()) {
+    contextButtons["copy"].style.display = "block";
+  } else {
+   contextButtons["copy"].style.display = "none";
+  }
+}
+
+function hideContextmenu() {
+  contextElem.style.display = "none";
 }
 
 function setCaretInterval() {
@@ -213,8 +235,14 @@ inputTextarea.addEventListener("focus", (ev) => {
   setCaretInterval();
 })
 
+terminalElem.addEventListener("contextmenu", (ev) => {
+  ev.preventDefault();
+  showContextmenu(ev);
+})
+
 document.addEventListener("click", (ev) => {
   if(document.activeElement == document.body && !window.getSelection().toString()) inputTextarea.focus();
+  hideContextmenu();
 })
 
 document.addEventListener("touchend", (ev) => {

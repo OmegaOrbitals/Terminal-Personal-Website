@@ -33,6 +33,20 @@ body {
   cursor: pointer;
 }
 
+#contextmenu {
+  display: none;
+  position: absolute;
+  flex-direction: column;
+}
+
+#contextmenu > button {
+  background-color: #000000;
+  color: white;
+  font-size: 1rem;
+  border: thin solid white;
+  padding: 0 8px;
+}
+
 #terminal {
   height: 100%;
   width: 100%;
