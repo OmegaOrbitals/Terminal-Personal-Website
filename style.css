@@ -44,6 +44,10 @@ body {
   word-break: break-all;
 }
 
+#terminal > #text > #caret {
+  background-color: white;
+}
+
 #terminal > #inputTextarea {
   resize: none;
   overflow: hidden;

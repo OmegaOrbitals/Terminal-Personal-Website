@@ -1,4 +1,5 @@
 const inputText = document.querySelector("#inputText");
+const caretElem = document.querySelector("#caret");
 const inputTextarea = document.querySelector("#inputTextarea");
 const textElem = document.querySelector("#text");
 const terminalElem = document.querySelector("#terminal");
@@ -93,6 +94,7 @@ function output(...elements) {
     }
     textElem.append(lineElem);
     textElem.append(inputText);
+    textElem.append(caretElem);
     onTerminalResize();
   }
 }
@@ -194,6 +196,11 @@ document.addEventListener("keyup", (ev) => {
 
 inputTextarea.addEventListener("input", (ev) => {
   inputText.innerText = inputTextarea.value;
+  caretElem.style["background-color"] = "white";
+  clearInterval(caretInterval);
+  caretInterval = setInterval(() => {
+    caretElem.style["background-color"] = caretElem.style["background-color"] == "white" ? "transparent" : "white";
+  }, 500)
   changeInputSize();
 })
 
@@ -205,10 +212,12 @@ document.addEventListener("touchend", (ev) => {
   if(document.activeElement == document.body) inputTextarea.focus();
 })
 
-
 changeInputSize();
 output({ innerText: "Welcome to my personal website!\nType 'help' for a list of commands." });
 output({ innerText: "\n$ ", style: "color: lightgreen" });
+let caretInterval = setInterval(() => {
+  caretElem.style["background-color"] = caretElem.style["background-color"] == "white" ? "transparent" : "white";
+}, 500)
 
 const commands = [
   {
