@@ -82,6 +82,12 @@ function onTerminalResize() {
 function output(...elements) {
   for(let element of elements) {
     let lineElem = document.createElement("span");
+    if(element["href"]) {
+      lineElem.classList.add("link");
+      lineElem.addEventListener("click", (ev) => {
+        window.open(element["href"]);
+      })
+    }
     for(let arg in element) {
       lineElem[arg] = element[arg];
     }
