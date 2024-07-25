@@ -59,6 +59,7 @@ function createDir(path, name) {
 }
 
 function read(prompt) {
+  output({ innerText: prompt });
   return new Promise((resolve) => {
     reading = true;
     readPromiseResolve = resolve;
