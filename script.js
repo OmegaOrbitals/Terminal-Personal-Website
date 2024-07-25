@@ -99,12 +99,6 @@ function output(...elements) {
   }
 }
 
-function changeInputSize() {
-  inputTextarea.style.height = "5px";
-  inputTextarea.style.height = (inputTextarea.scrollHeight) + "px";
-  onTerminalResize();
-}
-
 function autoscroll(el) {
   if(typeof el.selectionStart == "number") {
     el.selectionStart = el.selectionEnd = el.value.length;
@@ -125,7 +119,6 @@ document.addEventListener("keydown", async (ev) => {
     if(inputValue) output({ innerText: inputValue + "\n" });
     inputTextarea.value = "";
     inputText.innerText = inputTextarea.value;
-    changeInputSize();
     if(reading == false) {
       const lines = inputValue.replaceAll(";", "\n").split("\n");
       for(let line of lines) {
@@ -161,7 +154,6 @@ document.addEventListener("keydown", async (ev) => {
     commandHistoryIndex -= 1;
     inputTextarea.value = commandHistory[commandHistoryIndex];
     inputText.innerText = inputTextarea.value;
-    changeInputSize();
     autoscroll(inputTextarea);
   }
   if(ev.key == "ArrowDown") {
@@ -174,7 +166,6 @@ document.addEventListener("keydown", async (ev) => {
       inputTextarea.value = "";
     }
     inputText.innerText = inputTextarea.value;
-    changeInputSize();
     autoscroll(inputTextarea);
   }
   if(ev.key == "Shift") {
@@ -201,7 +192,6 @@ inputTextarea.addEventListener("input", (ev) => {
   caretInterval = setInterval(() => {
     caretElem.style["background-color"] = caretElem.style["background-color"] == "white" ? "transparent" : "white";
   }, 500)
-  changeInputSize();
 })
 
 document.addEventListener("click", (ev) => {
@@ -212,7 +202,6 @@ document.addEventListener("touchend", (ev) => {
   if(document.activeElement == document.body) inputTextarea.focus();
 })
 
-changeInputSize();
 output({ innerText: "Welcome to my personal website!\nType 'help' for a list of commands." });
 output({ innerText: "\n$ ", style: "color: lightgreen" });
 let caretInterval = setInterval(() => {
