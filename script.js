@@ -128,7 +128,7 @@ function output(...elements) {
 }
 
 function outputPrompt() {
-  output({ innerText: "\n$ ", style: "color: lightgreen" });
+  output({ innerText: "$ ", style: "color: lightgreen" });
 }
 
 function moveToEnd(el) {
@@ -195,12 +195,13 @@ document.addEventListener("keydown", async (ev) => {
           }
         }
         if(!isCommand && line != "") {
-          output({ innerText: `Command '${line.split(" ")[0]}' not found.${i == lines.length - 1 ? "" : "\n"}` });
+          output({ innerText: `Command '${line.split(" ")[0]}' not found.` });
         }
         if(commandHistory[commandHistory.length - 1] != line && !untrimmed.startsWith(" ") && line) {
           commandHistory.push(line);
           commandHistoryIndex = commandHistory.length;
         }
+        output({ innerText: "\n" });
       }
       outputPrompt();
     } else {
@@ -287,7 +288,7 @@ document.addEventListener("touchend", (ev) => {
   }
 })
 
-output({ innerText: "Welcome to my personal website!\nType 'help' for a list of commands." });
+output({ innerText: "Welcome to my personal website!\nType 'help' for a list of commands.\n" });
 outputPrompt();
 
 const commands = [
