@@ -72,12 +72,9 @@ body {
   resize: none;
   overflow: hidden;
   font-size: 1rem;
-  position: absolute;
-  top: -9999px;
-  left: -9999px;
   width: 1px;
   height: 1px;
-  background-color: transparent;
+  opacity: 0;
   border: none;
   outline: none;
 }

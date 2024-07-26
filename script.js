@@ -97,9 +97,11 @@ function newInput(text) {
 }
 
 function scrollToEnd() {
-  window.scrollTo({
-    top: document.body.scrollHeight
-  })
+  setTimeout(() => {
+    window.scrollTo({
+      top: document.body.scrollHeight
+    })
+  }, 0)
 }
 
 function updateInputText() {
@@ -165,7 +167,10 @@ function setCaretInterval() {
 }
 
 document.addEventListener("keydown", async (ev) => {
-  if(document.activeElement == document.body && !window.getSelection().toString()) inputTextarea.focus();
+  if(document.activeElement == document.body && !window.getSelection().toString()) {
+    inputTextarea.focus();
+  }
+  scrollToEnd();
   if(ev.key == "Enter") {
     setCaretInterval();
     if(keys.shift) return;
@@ -241,6 +246,7 @@ document.addEventListener("keyup", (ev) => {
 
 window.addEventListener("load", () => {
   inputTextarea.focus();
+  scrollToEnd();
 })
 
 inputTextarea.addEventListener("input", (ev) => {
@@ -264,7 +270,10 @@ terminalElem.addEventListener("contextmenu", (ev) => {
 })
 
 document.addEventListener("click", (ev) => {
-  if(document.activeElement == document.body && !window.getSelection().toString()) inputTextarea.focus();
+  if(document.activeElement == document.body && !window.getSelection().toString()) {
+    inputTextarea.focus();
+    scrollToEnd();
+  }
 })
 
 document.addEventListener("mousedown", (ev) => {
@@ -272,7 +281,10 @@ document.addEventListener("mousedown", (ev) => {
 })
 
 document.addEventListener("touchend", (ev) => {
-  if(document.activeElement == document.body) inputTextarea.focus();
+  if(document.activeElement == document.body) {
+    inputTextarea.focus();
+    scrollToEnd();
+  }
 })
 
 output({ innerText: "Welcome to my personal website!\nType 'help' for a list of commands." });
