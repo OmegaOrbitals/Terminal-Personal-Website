@@ -144,7 +144,7 @@ function moveToEnd(el) {
 
 function showContextmenu(ev) {
   contextElem.style.left = ev.clientX + "px";
-  contextElem.style.top = ev.clientY + "px";
+  contextElem.style.top = ev.clientY + window.scrollY + "px";
   contextElem.style.display = "flex";
   const selection = window.getSelection();
   if(selection.rangeCount > 0 && selection.toString()) {
