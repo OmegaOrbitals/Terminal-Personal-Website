@@ -14,6 +14,7 @@ body {
   width: 100%;
   background-color: black;
   overflow-x: hidden;
+  cursor: text;
 }
 
 ::selection {
@@ -57,7 +58,6 @@ body {
   align-items: flex-start;
   padding: 15px;
   box-sizing: border-box;
-  cursor: text;
 }
 
 #terminal > #text {
