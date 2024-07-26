@@ -49,7 +49,7 @@ body {
 }
 
 #terminal {
-  height: 100%;
+  height: fit-content;
   width: 100%;
   display: flex;
   flex-direction: column;
