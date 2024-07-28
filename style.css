@@ -61,15 +61,19 @@ body {
   box-sizing: border-box;
 }
 
-#terminal > #text {
+#terminal > #text > #output {
   word-break: break-all;
+}
+
+#terminal > #text > #prompt {
+  color: lightgreen;
 }
 
 #terminal > #text > #caret {
   background-color: transparent;
 }
 
-#terminal > #inputTextarea {
+#terminal > #text > #inputTextarea {
   resize: none;
   overflow: hidden;
   font-size: 1rem;

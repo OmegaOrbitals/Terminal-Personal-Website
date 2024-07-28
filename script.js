@@ -1,7 +1,7 @@
-const inputText = document.querySelector("#inputText");
+const inputTextElem = document.querySelector("#inputText");
 const caretElem = document.querySelector("#caret");
 const inputTextarea = document.querySelector("#inputTextarea");
-const textElem = document.querySelector("#text");
+const outputElem = document.querySelector("#output");
 const terminalElem = document.querySelector("#terminal");
 const promptElem = document.querySelector("#prompt");
 const contextElem = document.querySelector("#contextmenu");
@@ -54,6 +54,10 @@ contextButtons["paste"].addEventListener("click", (ev) => {
   })
 })
 
+String.prototype.replaceAt = function(index, replacement) { // https://stackoverflow.com/a/1431113
+  return this.substring(0, index) + replacement + this.substring(index + replacement.length);
+}
+
 function getPathDestination(path) {
   let destination = filesystem;
   if(path == "/") return destination;
@@ -83,6 +87,7 @@ function createDir(path, name) {
 
 function read(prompt) {
   output({ innerText: prompt });
+  promptElem.style.display = "none";
   return new Promise((resolve) => {
     reading = true;
     readPromiseResolve = resolve;
@@ -93,6 +98,7 @@ function newInput(text) {
   if(readPromiseResolve) {
     readPromiseResolve(text);
   }
+  promptElem.style.display = "inline";
   reading = false;
 }
 
@@ -105,7 +111,9 @@ function scrollToEnd() {
 }
 
 function updateInputText() {
-  inputText.innerText = inputTextarea.value;
+  inputText = inputTextarea.value;
+  inputTextElem.innerText = inputText;
+  updateCaret();
 }
 
 function output(...elements) {
@@ -120,15 +128,18 @@ function output(...elements) {
     for(let arg in element) {
       lineElem[arg] = element[arg];
     }
-    textElem.append(lineElem);
-    textElem.append(inputText);
-    textElem.append(caretElem);
+    outputElem.append(lineElem);
     scrollToEnd();
   }
 }
 
-function outputPrompt() {
-  output({ innerText: "$ ", style: "color: lightgreen" });
+function updateCaret() {
+  let inputTextHTML = inputText;
+  for(let i = inputTextarea.selectionStart; i < inputTextarea.selectionEnd; i++) {
+    inputTextHTML.replaceAt(i, `<span style="background-color: white; color: black;">${inputText.at(i)}</span>`);
+  }
+  inputTextElem.innerHTML = inputTextHTML;
+  console.log(inputTextElem.innerHTML)
 }
 
 function moveToEnd(el) {
@@ -169,8 +180,9 @@ function setCaretInterval() {
 document.addEventListener("keydown", async (ev) => {
   if(document.activeElement == document.body && !window.getSelection().toString()) {
     inputTextarea.focus();
+    scrollToEnd();
   }
-  scrollToEnd();
+  updateCaret();
   if(ev.key == "Enter") {
     setCaretInterval();
     if(keys.shift) return;
@@ -178,7 +190,8 @@ document.addEventListener("keydown", async (ev) => {
     let inputValue = inputTextarea.value;
     inputTextarea.value = "";
     updateInputText();
-    if(inputValue) output({ innerText: inputValue + "\n" });
+    if(reading == false) output({ innerText: "$ ", style: "color: lightgreen;" });
+    if(inputValue || reading) output({ innerText: inputValue + "\n" });
     if(reading == false) {
       const lines = inputValue.replaceAll(";", "\n").split("\n");
       for(let i = 0; i < lines.length; i++) {
@@ -201,9 +214,8 @@ document.addEventListener("keydown", async (ev) => {
           commandHistory.push(line);
           commandHistoryIndex = commandHistory.length;
         }
-        output({ innerText: "\n" });
+        if(line != "" || lines < 1) output({ innerText: "\n" });
       }
-      outputPrompt();
     } else {
       newInput(inputValue);
     }
@@ -266,8 +278,10 @@ inputTextarea.addEventListener("focus", (ev) => {
 })
 
 terminalElem.addEventListener("contextmenu", (ev) => {
-  ev.preventDefault();
-  showContextmenu(ev);
+  if(keys.ctrl == false) {
+    ev.preventDefault();
+    showContextmenu(ev);
+  }
 })
 
 document.addEventListener("click", (ev) => {
@@ -289,7 +303,6 @@ document.addEventListener("touchend", (ev) => {
 })
 
 output({ innerText: "Welcome to my personal website!\nType 'help' for a list of commands.\n" });
-outputPrompt();
 
 const commands = [
   {
