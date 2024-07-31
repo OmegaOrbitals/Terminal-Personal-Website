@@ -183,9 +183,12 @@ function hideContextmenu() {
 }
 
 function setCaretInterval() {
+  if(caretInterval) {
+    clearInterval(caretInterval);
+  }
   caretElem.style["background-color"] = "white";
-  clearInterval(caretInterval);
   caretInterval = setInterval(() => {
+    if(inputTextarea.selectionStart != inputTextarea.selectionEnd) return;
     caretElem.style["background-color"] = caretElem.style["background-color"] == "white" ? "transparent" : "white";
     caretElem.style["color"] = caretElem.style["background-color"] == "white" ? "black" : "white";
   }, 500)
