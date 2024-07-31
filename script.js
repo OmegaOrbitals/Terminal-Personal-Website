@@ -1,5 +1,5 @@
 const inputTextElem = document.querySelector("#inputText");
-const caretElem = document.querySelector("#caret");
+let caretElem = document.querySelector("#caret");
 const inputTextarea = document.querySelector("#inputTextarea");
 const outputElem = document.querySelector("#output");
 const terminalElem = document.querySelector("#terminal");
@@ -33,6 +33,8 @@ let filesystem = {
 }
 let caretInterval;
 let contextButtons = {};
+let inputText;
+let caretPos = { start: null, end: null };
 
 for(let button of contextElem.children) {
   contextButtons[button.id] = button;
@@ -54,8 +56,8 @@ contextButtons["paste"].addEventListener("click", (ev) => {
   })
 })
 
-String.prototype.replaceAt = function(index, replacement) { // https://stackoverflow.com/a/1431113
-  return this.substring(0, index) + replacement + this.substring(index + replacement.length);
+String.prototype.replaceAt = function(start, length, replacement) {
+  return this.substring(0, start) + replacement + this.substring(start + length);
 }
 
 function getPathDestination(path) {
@@ -113,7 +115,6 @@ function scrollToEnd() {
 function updateInputText() {
   inputText = inputTextarea.value;
   inputTextElem.innerText = inputText;
-  updateCaret();
 }
 
 function output(...elements) {
@@ -134,12 +135,24 @@ function output(...elements) {
 }
 
 function updateCaret() {
-  let inputTextHTML = inputText;
-  for(let i = inputTextarea.selectionStart; i < inputTextarea.selectionEnd; i++) {
-    inputTextHTML.replaceAt(i, `<span style="background-color: white; color: black;">${inputText.at(i)}</span>`);
-  }
-  inputTextElem.innerHTML = inputTextHTML;
-  console.log(inputTextElem.innerHTML)
+  setTimeout(() => {
+    if(caretPos.start == inputTextarea.selectionStart && caretPos.end == inputTextarea.selectionEnd) return;
+    caretPos.start = inputTextarea.selectionStart;
+    caretPos.end = inputTextarea.selectionEnd;
+    if(!inputText) {
+      inputTextElem.innerHTML = `<span id="caret" style="background-color: white; color: black;">&nbsp;</span>`;
+      caretElem = document.querySelector("#caret");
+      return setCaretInterval();
+    }
+    let caretStr = inputText.substring(inputTextarea.selectionStart, inputTextarea.selectionEnd + (inputTextarea.selectionStart == inputTextarea.selectionEnd ? 1 : 0));
+    if(!caretStr) caretStr = "&nbsp;";
+    let caretSpan = `<span id="caret" style="background-color: white; color: black;">${caretStr}</span>`;
+    let inputTextHTML = inputText.replaceAt(inputTextarea.selectionStart, caretStr.length, caretSpan);
+    if(inputTextHTML == inputTextElem.innerHTML) return;
+    inputTextElem.innerHTML = inputTextHTML;
+    caretElem = document.querySelector("#caret");
+    setCaretInterval();
+  }, 0)
 }
 
 function moveToEnd(el) {
@@ -174,6 +187,7 @@ function setCaretInterval() {
   clearInterval(caretInterval);
   caretInterval = setInterval(() => {
     caretElem.style["background-color"] = caretElem.style["background-color"] == "white" ? "transparent" : "white";
+    caretElem.style["color"] = caretElem.style["background-color"] == "white" ? "black" : "white";
   }, 500)
 }
 
@@ -264,17 +278,18 @@ window.addEventListener("load", () => {
 
 inputTextarea.addEventListener("input", (ev) => {
   updateInputText();
-  setCaretInterval();
   scrollToEnd();
 })
 
 inputTextarea.addEventListener("blur", (ev) => {
+  caretPos = { start: null, end: null };
   clearInterval(caretInterval);
   caretElem.style["background-color"] = "transparent";
+  caretElem.style["color"] = "white";
 })
 
 inputTextarea.addEventListener("focus", (ev) => {
-  setCaretInterval();
+  updateCaret();
 })
 
 terminalElem.addEventListener("contextmenu", (ev) => {
@@ -292,7 +307,7 @@ document.addEventListener("click", (ev) => {
 })
 
 document.addEventListener("mousedown", (ev) => {
-  if(!contextmenu.contains(ev.target)) hideContextmenu();
+  if(!contextElem.contains(ev.target)) hideContextmenu();
 })
 
 document.addEventListener("touchend", (ev) => {
@@ -303,6 +318,7 @@ document.addEventListener("touchend", (ev) => {
 })
 
 output({ innerText: "Welcome to my personal website!\nType 'help' for a list of commands.\n" });
+setCaretInterval();
 
 const commands = [
   {
