@@ -134,9 +134,9 @@ function output(...elements) {
   }
 }
 
-function updateCaret() {
+function updateCaret(newCmd) {
   setTimeout(() => {
-    if(caretPos.start == inputTextarea.selectionStart && caretPos.end == inputTextarea.selectionEnd) return;
+    if(caretPos.start == inputTextarea.selectionStart && caretPos.end == inputTextarea.selectionEnd && !newCmd) return;
     caretPos.start = inputTextarea.selectionStart;
     caretPos.end = inputTextarea.selectionEnd;
     if(!inputText) {
@@ -201,6 +201,7 @@ document.addEventListener("keydown", async (ev) => {
   }
   updateCaret();
   if(ev.key == "Enter") {
+    updateCaret(true);
     setCaretInterval();
     if(keys.shift) return;
     ev.preventDefault();
@@ -360,7 +361,7 @@ const commands = [
   {
     aliases: ["linktest"],
     run: async () => {
-      output({ innerText: "Links are a WIP :(" });
+      output({ innerText: window.location.href, href: window.location.href });
     }
   },
   {
