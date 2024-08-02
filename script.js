@@ -14,6 +14,7 @@ let keys = {
 let commandHistory = [];
 let commandHistoryIndex = -1;
 let reading = false;
+let isInShell = false;
 let readPromiseResolve;
 let filesystem = {
   name: "/",
@@ -35,6 +36,13 @@ let caretInterval;
 let contextButtons = {};
 let inputText;
 let caretPos = { start: null, end: null };
+
+let utils = {
+  delay: (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
+  clear: () => {
+    outputElem.innerHTML = "";
+  }
+}
 
 for(let button of contextElem.children) {
   contextButtons[button.id] = button;
@@ -89,7 +97,6 @@ function createDir(path, name) {
 
 function read(prompt) {
   output({ innerText: prompt });
-  promptElem.style.display = "none";
   return new Promise((resolve) => {
     reading = true;
     readPromiseResolve = resolve;
@@ -100,7 +107,6 @@ function newInput(text) {
   if(readPromiseResolve) {
     readPromiseResolve(text);
   }
-  promptElem.style.display = "inline";
   reading = false;
 }
 
@@ -210,6 +216,8 @@ document.addEventListener("keydown", async (ev) => {
     updateInputText();
     if(reading == false) output({ innerText: "$ ", style: "color: lightgreen;" });
     if(inputValue || reading) output({ innerText: inputValue + "\n" });
+    isInShell = false;
+    promptElem.style.display = "none";
     if(reading == false) {
       const lines = inputValue.replaceAll(";", "\n").split("\n");
       for(let i = 0; i < lines.length; i++) {
@@ -232,6 +240,8 @@ document.addEventListener("keydown", async (ev) => {
           commandHistory.push(line);
           commandHistoryIndex = commandHistory.length;
         }
+        isInShell = true;
+        promptElem.style.display = "inline";
         if(line != "" || lines < 1) output({ innerText: "\n" });
       }
     } else {
@@ -398,9 +408,17 @@ const commands = [
     }
   },
   {
+    aliases: ["clear"],
+    description: "Clear the terminal",
+    category: "General",
+    run: async () => {
+      utils.clear();
+    }
+  },
+  {
     aliases: ["guessthenumber", "gtn"],
     description: "Play guess the number",
-    category: "Games",
+    category: "Fun",
     run: async () => {
       let playing = true;
       while(playing) {
@@ -415,6 +433,26 @@ const commands = [
           playing = false;
         }
       }
+    }
+  },
+  {
+    aliases: ["starwars"],
+    description: "Watch Star Wars: A New Hope in ASCII",
+    category: "Fun",
+    run: async () => {
+      await fetch("/starwars")
+      .then((res) => {
+        return res.text();
+      })
+      .then(async (text) => {
+        const LINES_PER_FRAME = 14;
+        const DELAY = 67;
+        const filmData = text.split("\n");
+        for(let i = 0; i < filmData.length; i += LINES_PER_FRAME) {
+          output({ innerText: `${LINES_PER_FRAME}${filmData.slice(i + 1, i + LINES_PER_FRAME).join("\n")}` });
+          await utils.delay(parseInt(filmData[i], 10) * DELAY);
+        }
+      })
     }
   },
   {
