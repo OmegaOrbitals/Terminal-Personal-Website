@@ -233,6 +233,8 @@ document.addEventListener("keydown", async (ev) => {
             }
           }
         }
+
+        console.log("fin")
         if(!isCommand && line != "") {
           output({ innerText: `Command '${line.split(" ")[0]}' not found.` });
         }
@@ -449,8 +451,9 @@ const commands = [
         const DELAY = 67;
         const filmData = text.split("\n");
         for(let i = 0; i < filmData.length; i += LINES_PER_FRAME) {
-          output({ innerText: `${LINES_PER_FRAME}${filmData.slice(i + 1, i + LINES_PER_FRAME).join("\n")}` });
-          await utils.delay(parseInt(filmData[i], 10) * DELAY);
+          utils.clear();
+          output({ innerHTML: filmData.slice(i + 1, i + LINES_PER_FRAME).join("<br>").replaceAll(" ", "&nbsp;") })
+          await utils.delay(parseInt(filmData[i], 10) * 67);
         }
       })
     }
